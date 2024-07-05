@@ -3,7 +3,6 @@ Let's make a game where you have P pillars of size S, and K kinds where each typ
 You may move units from pillar p0 to pillar p1 if the top stack units are of the same kind k0, and there is room on p1 for all k0 units from p0.
 */
 use std::fmt;
-use std::fmt::format;
 
 #[derive(Clone)]
 struct Kind {
@@ -24,7 +23,7 @@ struct Pillar {
 
 pub struct Game {
     pillars: Vec<Pillar>,
-    kinds: Vec<Kind>,
+    // kinds: Vec<Kind>,
 }
 
 impl Game {
@@ -35,10 +34,11 @@ impl Game {
         kinds_size: usize,
         seed: u32,
     ) -> Game {
-        let mut kinds = Vec::new();
+        println!("{}", seed); // TODO: use seed to randomize the game.
+                              // let mut kinds = Vec::new();
         let mut units = Vec::new();
         for id in 0..kinds_size {
-            kinds.push(Kind { id: id });
+            // kinds.push(Kind { id: id });
             for _ in 0..units_per_kind {
                 units.push(Kind { id: id });
             }
@@ -59,7 +59,7 @@ impl Game {
             });
         }
 
-        Game { pillars, kinds }
+        Game { pillars } //, kinds }
     }
 
     pub fn render(&self) {
