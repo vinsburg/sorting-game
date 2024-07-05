@@ -34,8 +34,8 @@ impl Game {
         kinds_size: usize,
         seed: u32,
     ) -> Game {
-        println!("{}", seed); // TODO: use seed to randomize the game.
-                              // let mut kinds = Vec::new();
+        println!("Seed: {}", seed); // TODO: use seed to randomize the game.
+                                    // let mut kinds = Vec::new();
         let mut units = Vec::new();
         for id in 0..kinds_size {
             // kinds.push(Kind { id: id });
