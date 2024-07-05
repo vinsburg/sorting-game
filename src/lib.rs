@@ -63,9 +63,15 @@ impl Game {
     }
 
     pub fn render(&self) {
-        for (ind, pillar) in self.pillars.iter().enumerate() {
-            let formatted_units = format!("{:?}", pillar.units);
-            println!("{}: {:?}", ind, formatted_units);
+        for (pillar_ind, pillar) in self.pillars.iter().enumerate() {
+            let mut render_vec: Vec<String> = Vec::new();
+            for unit in &pillar.units {
+                render_vec.push(format!("{:?}", unit));
+            }
+            for _ in pillar.units.len()..pillar.size {
+                render_vec.push("_".to_string());
+            }
+            println!("{}: {:?}", pillar_ind, render_vec);
         }
     }
 }
