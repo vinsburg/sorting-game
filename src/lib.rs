@@ -44,6 +44,12 @@ impl Pillar {
         }
         poppers
     }
+
+    fn push_occupants(&mut self, occupants: Vec<Kind>) {
+        for occupant in occupants {
+            self.units.push(occupant);
+        }
+    }
 }
 
 pub struct Game {
