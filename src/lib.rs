@@ -4,7 +4,7 @@ You may move units from pillar p0 to pillar p1 if the top stack units are of the
 */
 use std::fmt;
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 struct Kind {
     id: usize,
 }
@@ -19,6 +19,36 @@ impl fmt::Debug for Kind {
 struct Pillar {
     size: usize,
     units: Vec<Kind>,
+}
+
+#[allow(dead_code)]
+impl Pillar {
+    fn is_vacant(&self) -> bool {
+        self.units.len() == 0
+    }
+
+    fn get_vacancy(&self) -> usize {
+        self.size - self.units.len()
+    }
+
+    fn get_top_occupant_kind(&self) -> Option<&Kind> {
+        self.units.last()
+    }
+
+    fn count_top_occupant(&self) -> usize {
+        let mut count: usize = 0;
+        if !self.is_vacant() {
+            let top_occupant = self.get_top_occupant_kind().unwrap();
+            for ind in self.units.len()..0 {
+                if self.units[ind - 1] == *top_occupant {
+                    count += 1;
+                } else {
+                    break;
+                }
+            }
+        }
+        count
+    }
 }
 
 pub struct Game {
