@@ -31,23 +31,18 @@ impl Pillar {
         self.size - self.units.len()
     }
 
-    fn get_top_occupant_kind(&self) -> Option<&Kind> {
-        self.units.last()
+    fn get_top_occupant_kind(&self) -> Option<Kind> {
+        self.units.last().cloned()
     }
 
-    fn count_top_occupant(&self) -> usize {
-        let mut count: usize = 0;
-        if !self.is_vacant() {
-            let top_occupant = self.get_top_occupant_kind().unwrap();
-            for ind in self.units.len()..0 {
-                if self.units[ind - 1] == *top_occupant {
-                    count += 1;
-                } else {
-                    break;
-                }
-            }
+    fn pop_top_occupants(&mut self) -> Vec<Kind> {
+        let mut poppers: Vec<Kind> = Vec::new();
+        let top_occupant = self.get_top_occupant_kind().unwrap();
+        while !self.is_vacant() && self.get_top_occupant_kind().unwrap() == top_occupant {
+            self.units.pop();
+            poppers.push(top_occupant.clone());
         }
-        count
+        poppers
     }
 }
 
