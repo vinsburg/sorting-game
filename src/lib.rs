@@ -35,7 +35,7 @@ impl Pillar {
         self.units.last().cloned()
     }
 
-    fn pop_top_occupants(&mut self, mut occupants: Vec<Kind>) {
+    fn pop_top_occupants(&mut self, occupants: &mut Vec<Kind>) {
         let top_occupant = self.get_top_occupant_kind().unwrap();
         while !self.is_vacant() && self.get_top_occupant_kind().unwrap() == top_occupant {
             self.units.pop();
@@ -43,7 +43,7 @@ impl Pillar {
         }
     }
 
-    fn push_occupants(&mut self, occupants: Vec<Kind>) {
+    fn push_occupants(&mut self, occupants: &mut Vec<Kind>) {
         for occupant in occupants {
             self.units.push(occupant);
         }
@@ -52,7 +52,6 @@ impl Pillar {
 
 pub struct Game {
     pillars: Vec<Pillar>,
-    // kinds: Vec<Kind>,
 }
 
 impl Game {
@@ -85,7 +84,7 @@ impl Game {
                 size: pillar_size,
                 // Init a vec of type Unit:
                 units: pillar_units,
-            });
+            });    
         }
 
         Game { pillars } //, kinds }
@@ -103,5 +102,14 @@ impl Game {
             }
             println!("{}: {:?}", pillar_ind, render_vec);
         }
+    }
+
+    pub fn move_units(&mut self, from: usize, to: usize) {
+        let from_pillar = &mut self.pillars[from];
+        let mut occupants = &mut Vec::new();
+        from_pillar.pop_top_occupants(occupants);
+
+        let to_pillar = &mut self.pillars[to];
+        to_pillar.push_occupants(occupants);
     }
 }
