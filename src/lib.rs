@@ -44,8 +44,9 @@ impl Pillar {
     }
 
     fn push_occupants(&mut self, occupants: &mut Vec<Kind>) {
-        for occupant in occupants {
-            self.units.push(*occupant);
+        while occupants.len() != 0 {
+            let occupant = occupants.pop().unwrap();
+            self.units.push(occupant);
         }
     }
 }
@@ -105,13 +106,13 @@ impl Game {
     }
 
     pub fn move_units(&mut self, from: usize, to: usize) {
-        let from_top_occupant = self.pillars[from].get_top_occupant_kind().unwrap();
-        let to_top_occupant = self.pillars[to].get_top_occupant_kind().unwrap();
-
         let occupants = &mut Vec::new();
         self.pillars[from].pop_top_occupants(occupants);
 
         if !self.pillars[to].is_vacant() {
+            let from_top_occupant = self.pillars[from].get_top_occupant_kind().unwrap();
+            let to_top_occupant = self.pillars[to].get_top_occupant_kind().unwrap();
+
             let to_vacancy: usize = self.pillars[to].get_vacancy();
             if (from_top_occupant != to_top_occupant) || (to_vacancy < occupants.len()) {
                 self.pillars[from].push_occupants(occupants);
