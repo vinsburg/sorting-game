@@ -4,7 +4,7 @@ You may move units from pillar p0 to pillar p1 if the top stack units are of the
 */
 use std::fmt;
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Copy)]
 struct Kind {
     id: usize,
 }
@@ -45,7 +45,7 @@ impl Pillar {
 
     fn push_occupants(&mut self, occupants: &mut Vec<Kind>) {
         for occupant in occupants {
-            self.units.push(occupant);
+            self.units.push(*occupant);
         }
     }
 }
@@ -84,7 +84,7 @@ impl Game {
                 size: pillar_size,
                 // Init a vec of type Unit:
                 units: pillar_units,
-            });    
+            });
         }
 
         Game { pillars } //, kinds }
@@ -105,11 +105,20 @@ impl Game {
     }
 
     pub fn move_units(&mut self, from: usize, to: usize) {
-        let from_pillar = &mut self.pillars[from];
-        let mut occupants = &mut Vec::new();
-        from_pillar.pop_top_occupants(occupants);
+        let from_top_occupant = self.pillars[from].get_top_occupant_kind().unwrap();
+        let to_top_occupant = self.pillars[to].get_top_occupant_kind().unwrap();
 
-        let to_pillar = &mut self.pillars[to];
-        to_pillar.push_occupants(occupants);
+        let occupants = &mut Vec::new();
+        self.pillars[from].pop_top_occupants(occupants);
+
+        if !self.pillars[to].is_vacant() {
+            let to_vacancy: usize = self.pillars[to].get_vacancy();
+            if (from_top_occupant != to_top_occupant) || (to_vacancy < occupants.len()) {
+                self.pillars[from].push_occupants(occupants);
+            }
+        }
+        if occupants.len() != 0 {
+            self.pillars[to].push_occupants(occupants);
+        }
     }
 }
