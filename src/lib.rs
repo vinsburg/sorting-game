@@ -35,14 +35,12 @@ impl Pillar {
         self.units.last().cloned()
     }
 
-    fn pop_top_occupants(&mut self) -> Vec<Kind> {
-        let mut poppers: Vec<Kind> = Vec::new();
+    fn pop_top_occupants(&mut self, mut occupants: Vec<Kind>) {
         let top_occupant = self.get_top_occupant_kind().unwrap();
         while !self.is_vacant() && self.get_top_occupant_kind().unwrap() == top_occupant {
             self.units.pop();
-            poppers.push(top_occupant.clone());
+            occupants.push(top_occupant.clone());
         }
-        poppers
     }
 
     fn push_occupants(&mut self, occupants: Vec<Kind>) {
