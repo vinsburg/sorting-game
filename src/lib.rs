@@ -31,13 +31,17 @@ impl Pillar {
         self.size - self.units.len()
     }
 
-    fn get_top_occupant_kind(&self) -> Option<Kind> {
-        self.units.last().cloned()
+    fn get_top_occupant_kind(&self) -> Kind {
+        if self.units.len() == 0 {
+            return Kind { id: 0 };
+        } else {
+            return self.units.last().unwrap().clone();
+        }
     }
 
     fn pop_top_occupants(&mut self, occupants: &mut Vec<Kind>) {
-        let top_occupant = self.get_top_occupant_kind().unwrap();
-        while !self.is_vacant() && self.get_top_occupant_kind().unwrap() == top_occupant {
+        let top_occupant = self.get_top_occupant_kind();
+        while !self.is_vacant() && self.get_top_occupant_kind() == top_occupant {
             self.units.pop();
             occupants.push(top_occupant.clone());
         }
@@ -66,7 +70,7 @@ impl Game {
         println!("Seed: {}", seed); // TODO: use seed to randomize the game.
                                     // let mut kinds = Vec::new();
         let mut units = Vec::new();
-        for id in 0..kinds_size {
+        for id in 1..kinds_size + 1 {
             // kinds.push(Kind { id: id });
             for _ in 0..units_per_kind {
                 units.push(Kind { id: id });
@@ -110,8 +114,8 @@ impl Game {
         self.pillars[from].pop_top_occupants(occupants);
 
         if !self.pillars[to].is_vacant() {
-            let from_top_occupant = self.pillars[from].get_top_occupant_kind().unwrap();
-            let to_top_occupant = self.pillars[to].get_top_occupant_kind().unwrap();
+            let from_top_occupant = self.pillars[from].get_top_occupant_kind();
+            let to_top_occupant = self.pillars[to].get_top_occupant_kind();
 
             let to_vacancy: usize = self.pillars[to].get_vacancy();
             if (from_top_occupant != to_top_occupant) || (to_vacancy < occupants.len()) {
