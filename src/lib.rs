@@ -141,7 +141,7 @@ impl Game {
         if occupants.len() < self.stacks[to].size {
             self.stacks[to].push_occupants(occupants);
         } else {
-            println!("\nKind {:?} cleared!", from_top_occupant);
+            println!("\nKind \"{:?}\" cleared!", from_top_occupant);
             self.kinds_size -= 1;
         }
     }
