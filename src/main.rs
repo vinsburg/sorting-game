@@ -16,5 +16,9 @@ fn main() {
     );
     game.render();
     game.make_a_move(1, 2);
-    game.render()
+    game.render();
+    game.make_a_move(0, 1);
+    game.render();
+    game.make_a_move(2, 0);
+    game.render();
 }

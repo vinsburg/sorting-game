@@ -113,7 +113,7 @@ impl Game {
         let occupants = &mut Vec::new();
         let from_top_occupant = self.pillars[from].get_top_occupant_kind();
         self.pillars[from].pop_top_occupants(occupants);
-        
+
         if !self.pillars[to].is_vacant() {
             let to_top_occupant = self.pillars[to].get_top_occupant_kind();
             let to_vacancy: usize = self.pillars[to].get_vacancy();
@@ -121,6 +121,7 @@ impl Game {
                 self.pillars[from].push_occupants(occupants);
             }
         }
+
         if occupants.len() != 0 {
             self.pillars[to].push_occupants(occupants);
         }
