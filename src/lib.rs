@@ -1,6 +1,6 @@
 /*
-Let's make a game where you have P pillars of size S, and K kinds where each type has U units, scattered across the pillars.
-You may move units from pillar p0 to pillar p1 if the top stack units are of the same kind k0, and there is room on p1 for all k0 units from p0.
+Let's make a game where you have N stacks of size S, and K kinds where each type has U units, scattered across the stacks.
+You may move units from stack s0 to stack p1 if the top stack units are of the same kind k0, and there is room on s1 for all k0 units from s0.
 */
 use std::fmt;
 
@@ -16,13 +16,13 @@ impl fmt::Debug for Kind {
     }
 }
 
-struct Pillar {
+struct Stack {
     size: usize,
     units: Vec<Kind>,
 }
 
 #[allow(dead_code)]
-impl Pillar {
+impl Stack {
     fn is_vacant(&self) -> bool {
         self.units.len() == 0
     }
@@ -56,14 +56,14 @@ impl Pillar {
 }
 
 pub struct Game {
-    pillars: Vec<Pillar>,
+    stacks: Vec<Stack>,
     turn: usize,
 }
 
 impl Game {
     pub fn new(
-        pillar_quantity: usize,
-        pillar_size: usize,
+        stack_quantity: usize,
+        stack_size: usize,
         units_per_kind: usize,
         kinds_size: usize,
         seed: u32,
@@ -78,36 +78,36 @@ impl Game {
             }
         }
 
-        let units_per_pillar: usize = (kinds_size * units_per_kind) / pillar_quantity;
-        let mut pillars = Vec::new();
-        for _ in 0..pillar_quantity {
-            let mut pillar_units = Vec::new();
-            for _ in 0..units_per_pillar {
+        let units_per_stack: usize = (kinds_size * units_per_kind) / stack_quantity;
+        let mut stacks = Vec::new();
+        for _ in 0..stack_quantity {
+            let mut stack_units = Vec::new();
+            for _ in 0..units_per_stack {
                 let unit = units.pop().unwrap();
-                pillar_units.push(unit);
+                stack_units.push(unit);
             }
-            pillars.push(Pillar {
-                size: pillar_size,
+            stacks.push(Stack {
+                size: stack_size,
                 // Init a vec of type Unit:
-                units: pillar_units,
+                units: stack_units,
             });
         }
 
         let turn = 1;
 
-        Game { pillars, turn } //, kinds }
+        Game { stacks, turn } //, kinds }
     }
 
     pub fn render(&self) {
-        for (pillar_ind, pillar) in self.pillars.iter().enumerate() {
+        for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut render_vec: Vec<String> = Vec::new();
-            for unit in &pillar.units {
+            for unit in &stack.units {
                 render_vec.push(format!("{:?}", unit));
             }
-            for _ in pillar.units.len()..pillar.size {
+            for _ in stack.units.len()..stack.size {
                 render_vec.push("_".to_string());
             }
-            println!("{}: {:?}", pillar_ind, render_vec);
+            println!("{}: {:?}", stack_ind, render_vec);
         }
         println!();
     }
@@ -116,33 +116,33 @@ impl Game {
         self.turn += 1;
 
         let occupants = &mut Vec::new();
-        let from_top_occupant = self.pillars[from].get_top_occupant_kind();
-        self.pillars[from].pop_top_occupants(occupants);
+        let from_top_occupant = self.stacks[from].get_top_occupant_kind();
+        self.stacks[from].pop_top_occupants(occupants);
 
-        if !self.pillars[to].is_vacant() {
-            let to_top_occupant = self.pillars[to].get_top_occupant_kind();
-            let to_vacancy: usize = self.pillars[to].get_vacancy();
+        if !self.stacks[to].is_vacant() {
+            let to_top_occupant = self.stacks[to].get_top_occupant_kind();
+            let to_vacancy: usize = self.stacks[to].get_vacancy();
             if (from_top_occupant != to_top_occupant) || (to_vacancy < occupants.len()) {
-                self.pillars[from].push_occupants(occupants);
+                self.stacks[from].push_occupants(occupants);
             }
         }
 
         if occupants.len() != 0 {
-            self.pillars[to].push_occupants(occupants);
+            self.stacks[to].push_occupants(occupants);
         }
 
-        self.pillars[to].pop_top_occupants(occupants);
-        if occupants.len() < self.pillars[to].size {
-            self.pillars[from].push_occupants(occupants);
+        self.stacks[to].pop_top_occupants(occupants);
+        if occupants.len() < self.stacks[to].size {
+            self.stacks[from].push_occupants(occupants);
         } else {
-            println!("\nRow {} cleared!\n", to)
+            println!("\nStack {} cleared!\n", to)
         }
     }
 
     pub fn game_is_over(&self) -> bool {
         let mut is_over = true;
-        for pillar in &self.pillars {
-            if !pillar.is_vacant() {
+        for stack in &self.stacks {
+            if !stack.is_vacant() {
                 is_over = false;
                 break;
             }
@@ -164,9 +164,9 @@ impl Game {
             let mut from = String::new();
             let mut to = String::new();
             println!("Turn {} -", self.turn);
-            println!("Select row to move from:");
+            println!("Select stack to move from:");
             std::io::stdin().read_line(&mut from).unwrap();
-            println!("Select row to move to:");
+            println!("Select stack to move to:");
             std::io::stdin().read_line(&mut to).unwrap();
             let from: usize = from.trim().parse().unwrap();
             let to: usize = to.trim().parse().unwrap();
