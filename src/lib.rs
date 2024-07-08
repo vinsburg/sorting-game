@@ -125,5 +125,10 @@ impl Game {
         if occupants.len() != 0 {
             self.pillars[to].push_occupants(occupants);
         }
+
+        self.pillars[to].pop_top_occupants(occupants);
+        if occupants.len() < self.pillars[to].size {
+            self.pillars[from].push_occupants(occupants);
+        }
     }
 }
