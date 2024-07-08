@@ -109,7 +109,7 @@ impl Game {
         }
     }
 
-    pub fn move_units(&mut self, from: usize, to: usize) {
+    pub fn make_a_move(&mut self, from: usize, to: usize) {
         let occupants = &mut Vec::new();
         self.pillars[from].pop_top_occupants(occupants);
 

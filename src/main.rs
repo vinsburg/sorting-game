@@ -15,6 +15,6 @@ fn main() {
         seed,
     );
     game.render();
-    game.move_units(1, 2);
+    game.make_a_move(1, 2);
     game.render()
 }
