@@ -133,7 +133,7 @@ impl Game {
 
         self.stacks[to].pop_top_occupants(occupants);
         if occupants.len() < self.stacks[to].size {
-            self.stacks[from].push_occupants(occupants);
+            self.stacks[to].push_occupants(occupants);
         } else {
             println!("\nStack {} cleared!\n", to)
         }
