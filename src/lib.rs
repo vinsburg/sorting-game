@@ -57,7 +57,6 @@ impl Pillar {
 
 pub struct Game {
     pillars: Vec<Pillar>,
-    empties: usize,
     turn: usize,
 }
 
@@ -94,18 +93,12 @@ impl Game {
             });
         }
 
-        let empties = 0;
         let turn = 1;
 
-        Game {
-            pillars,
-            empties,
-            turn,
-        } //, kinds }
+        Game { pillars, turn } //, kinds }
     }
 
     pub fn render(&self) {
-        println!("\nTurn {}", self.turn);
         for (pillar_ind, pillar) in self.pillars.iter().enumerate() {
             let mut render_vec: Vec<String> = Vec::new();
             for unit in &pillar.units {
@@ -116,6 +109,7 @@ impl Game {
             }
             println!("{}: {:?}", pillar_ind, render_vec);
         }
+        println!();
     }
 
     pub fn make_a_move(&mut self, from: usize, to: usize) {
@@ -141,18 +135,42 @@ impl Game {
         if occupants.len() < self.pillars[to].size {
             self.pillars[from].push_occupants(occupants);
         } else {
-            self.empties += 1;
+            println!("\nRow {} cleared!\n", to)
         }
     }
 
     pub fn game_is_over(&self) -> bool {
-        self.empties == self.pillars.len()
+        let mut is_over = true;
+        for pillar in &self.pillars {
+            if !pillar.is_vacant() {
+                is_over = false;
+                break;
+            }
+        }
+        is_over
     }
 
     pub fn exit_if_player_won(&self) {
         if self.game_is_over() {
             println!("You won!");
             std::process::exit(0);
+        }
+    }
+
+    pub fn turn_loop(&mut self) {
+        loop {
+            self.render();
+            self.exit_if_player_won();
+            let mut from = String::new();
+            let mut to = String::new();
+            println!("Turn {} -", self.turn);
+            println!("Select row to move from:");
+            std::io::stdin().read_line(&mut from).unwrap();
+            println!("Select row to move to:");
+            std::io::stdin().read_line(&mut to).unwrap();
+            let from: usize = from.trim().parse().unwrap();
+            let to: usize = to.trim().parse().unwrap();
+            self.make_a_move(from, to);
         }
     }
 }

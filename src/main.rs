@@ -14,11 +14,5 @@ fn main() {
         kinds_size,
         seed,
     );
-    game.render();
-    game.make_a_move(1, 2);
-    game.render();
-    game.make_a_move(0, 1);
-    game.render();
-    game.make_a_move(2, 0);
-    game.render();
+    game.turn_loop();
 }
