@@ -57,6 +57,7 @@ impl Stack {
 
 pub struct Game {
     stacks: Vec<Stack>,
+    kinds_size: usize,
     turn: usize,
 }
 
@@ -95,10 +96,15 @@ impl Game {
 
         let turn = 1;
 
-        Game { stacks, turn } //, kinds }
+        Game {
+            stacks,
+            kinds_size,
+            turn,
+        } //, kinds }
     }
 
     pub fn render(&self) {
+        println!();
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut render_vec: Vec<String> = Vec::new();
             for unit in &stack.units {
@@ -135,24 +141,18 @@ impl Game {
         if occupants.len() < self.stacks[to].size {
             self.stacks[to].push_occupants(occupants);
         } else {
-            println!("\nStack {} cleared!\n", to)
+            println!("\nKind {:?} cleared!", from_top_occupant);
+            self.kinds_size -= 1;
         }
     }
 
     pub fn game_is_over(&self) -> bool {
-        let mut is_over = true;
-        for stack in &self.stacks {
-            if !stack.is_vacant() {
-                is_over = false;
-                break;
-            }
-        }
-        is_over
+        self.kinds_size == 0
     }
 
     pub fn exit_if_player_won(&self) {
         if self.game_is_over() {
-            println!("You won!");
+            println!("All Kinds Cleared! - You won!");
             std::process::exit(0);
         }
     }
