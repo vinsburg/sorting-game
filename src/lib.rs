@@ -57,6 +57,8 @@ impl Pillar {
 
 pub struct Game {
     pillars: Vec<Pillar>,
+    empties: usize,
+    turn: usize,
 }
 
 impl Game {
@@ -92,10 +94,18 @@ impl Game {
             });
         }
 
-        Game { pillars } //, kinds }
+        let empties = 0;
+        let turn = 1;
+
+        Game {
+            pillars,
+            empties,
+            turn,
+        } //, kinds }
     }
 
     pub fn render(&self) {
+        println!("\nTurn {}", self.turn);
         for (pillar_ind, pillar) in self.pillars.iter().enumerate() {
             let mut render_vec: Vec<String> = Vec::new();
             for unit in &pillar.units {
@@ -109,6 +119,8 @@ impl Game {
     }
 
     pub fn make_a_move(&mut self, from: usize, to: usize) {
+        self.turn += 1;
+
         let occupants = &mut Vec::new();
         let from_top_occupant = self.pillars[from].get_top_occupant_kind();
         self.pillars[from].pop_top_occupants(occupants);
@@ -128,6 +140,19 @@ impl Game {
         self.pillars[to].pop_top_occupants(occupants);
         if occupants.len() < self.pillars[to].size {
             self.pillars[from].push_occupants(occupants);
+        } else {
+            self.empties += 1;
+        }
+    }
+
+    pub fn game_is_over(&self) -> bool {
+        self.empties == self.pillars.len()
+    }
+
+    pub fn exit_if_player_won(&self) {
+        if self.game_is_over() {
+            println!("You won!");
+            std::process::exit(0);
         }
     }
 }
