@@ -96,7 +96,6 @@ impl Game {
     }
 
     pub fn render(&self) {
-        println!("Pillars:");
         for (pillar_ind, pillar) in self.pillars.iter().enumerate() {
             let mut render_vec: Vec<String> = Vec::new();
             for unit in &pillar.units {
