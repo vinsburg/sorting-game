@@ -11,7 +11,7 @@ struct Kind {
 
 impl fmt::Debug for Kind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Write the id directly, making Kind's debug output just its id as a usize
+        // The debug output of kind is the kind's id.
         write!(f, "{}", self.id)
     }
 }
