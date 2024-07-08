@@ -103,7 +103,7 @@ impl Game {
         } //, kinds }
     }
 
-    pub fn render(&self) {
+    fn render(&self) {
         println!();
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut render_vec: Vec<String> = Vec::new();
@@ -118,7 +118,7 @@ impl Game {
         println!();
     }
 
-    pub fn make_a_move(&mut self, from: usize, to: usize) {
+    fn make_a_move(&mut self, from: usize, to: usize) {
         self.turn += 1;
 
         let occupants = &mut Vec::new();
@@ -146,11 +146,11 @@ impl Game {
         }
     }
 
-    pub fn game_is_over(&self) -> bool {
+    fn game_is_over(&self) -> bool {
         self.kinds_size == 0
     }
 
-    pub fn exit_if_player_won(&self) {
+    fn exit_if_player_won(&self) {
         if self.game_is_over() {
             println!("All Kinds Cleared! - You won!");
             std::process::exit(0);
