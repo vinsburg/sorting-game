@@ -2,20 +2,12 @@
 Let's make a game where you have N stacks of size S, and K kinds where each type has U units, scattered across the stacks.
 You may move units from stack s0 to stack p1 if the top stack units are of the same kind k0, and there is room on s1 for all k0 units from s0.
 */
-use std::fmt;
 
 const DEFAULT_STACK_SIZE: usize = 5;
 
 #[derive(Clone, PartialEq, Eq, Copy)]
 struct Kind {
     id: usize,
-}
-
-impl fmt::Debug for Kind {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // The debug output of kind is the kind's id.
-        write!(f, "{}", self.id)
-    }
 }
 
 struct Stack {
@@ -76,7 +68,7 @@ impl Game {
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut render_vec: Vec<String> = Vec::new();
             for unit in &stack.units {
-                render_vec.push(format!("{:?}", unit));
+                render_vec.push(format!("{}", unit.id));
             }
             for _ in stack.units.len()..stack.size {
                 render_vec.push("_".to_string());
@@ -109,7 +101,7 @@ impl Game {
         if occupants.len() < self.stacks[to].size {
             self.stacks[to].push_occupants(occupants);
         } else {
-            println!("\nKind \"{:?}\" cleared!", from_top_occupant);
+            println!("\nKind \"{}\" cleared!", from_top_occupant.id);
             self.kinds_size -= 1;
         }
     }
