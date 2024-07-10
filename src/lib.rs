@@ -66,14 +66,14 @@ impl Game {
     fn render(&self) {
         println!();
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
-            let mut render_vec: Vec<String> = Vec::new();
+            let mut buffer: String = "".to_string();
             for unit in &stack.units {
-                render_vec.push(format!("{}", unit.id));
+                buffer.push_str(format!("{:>2} ", unit.id).as_str());
             }
             for _ in stack.units.len()..stack.size {
-                render_vec.push("_".to_string());
+                buffer.push_str("__ ");
             }
-            println!("{}: {:?}", stack_ind, render_vec);
+            println!("{:>2}: {}", stack_ind, buffer.trim_end_matches(", "));
         }
         println!();
     }
