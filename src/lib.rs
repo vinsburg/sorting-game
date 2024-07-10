@@ -4,6 +4,8 @@ You may move units from stack s0 to stack p1 if the top stack units are of the s
 */
 use std::fmt;
 
+const DEFAULT_STACK_SIZE: usize = 5;
+
 #[derive(Clone, PartialEq, Eq, Copy)]
 struct Kind {
     id: usize,
@@ -23,6 +25,13 @@ struct Stack {
 
 #[allow(dead_code)]
 impl Stack {
+    fn new(units: Vec<Kind>) -> Stack {
+        Stack {
+            size: DEFAULT_STACK_SIZE,
+            units,
+        }
+    }
+
     fn is_vacant(&self) -> bool {
         self.units.len() == 0
     }
@@ -62,47 +71,6 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(
-        stack_quantity: usize,
-        stack_size: usize,
-        units_per_kind: usize,
-        kinds_size: usize,
-        seed: u32,
-    ) -> Game {
-        println!("Seed: {}", seed); // TODO: use seed to randomize the game.
-                                    // let mut kinds = Vec::new();
-        let mut units = Vec::new();
-        for id in 1..kinds_size + 1 {
-            // kinds.push(Kind { id: id });
-            for _ in 0..units_per_kind {
-                units.push(Kind { id: id });
-            }
-        }
-
-        let units_per_stack: usize = (kinds_size * units_per_kind) / stack_quantity;
-        let mut stacks = Vec::new();
-        for _ in 0..stack_quantity {
-            let mut stack_units = Vec::new();
-            for _ in 0..units_per_stack {
-                let unit = units.pop().unwrap();
-                stack_units.push(unit);
-            }
-            stacks.push(Stack {
-                size: stack_size,
-                // Init a vec of type Unit:
-                units: stack_units,
-            });
-        }
-
-        let turn = 1;
-
-        Game {
-            stacks,
-            kinds_size,
-            turn,
-        } //, kinds }
-    }
-
     fn render(&self) {
         println!();
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
@@ -171,6 +139,71 @@ impl Game {
             let from: usize = from.trim().parse().unwrap();
             let to: usize = to.trim().parse().unwrap();
             self.make_a_move(from, to);
+        }
+    }
+
+    pub fn game_0() -> Game {
+        let stacks = vec![
+            Stack::new(vec![Kind { id: 1 }, Kind { id: 2 }, Kind { id: 3 }]),
+            Stack::new(vec![
+                Kind { id: 5 },
+                Kind { id: 5 },
+                Kind { id: 3 },
+                Kind { id: 3 },
+                Kind { id: 4 },
+            ]),
+            Stack::new(vec![
+                Kind { id: 6 },
+                Kind { id: 7 },
+                Kind { id: 8 },
+                Kind { id: 2 },
+                Kind { id: 8 },
+            ]),
+            Stack::new(vec![Kind { id: 9 }, Kind { id: 7 }, Kind { id: 7 }]),
+            Stack::new(vec![
+                Kind { id: 2 },
+                Kind { id: 7 },
+                Kind { id: 1 },
+                Kind { id: 10 },
+            ]),
+            Stack::new(vec![
+                Kind { id: 9 },
+                Kind { id: 5 },
+                Kind { id: 5 },
+                Kind { id: 3 },
+                Kind { id: 9 },
+            ]),
+            Stack::new(vec![
+                Kind { id: 7 },
+                Kind { id: 3 },
+                Kind { id: 10 },
+                Kind { id: 9 },
+            ]),
+            Stack::new(vec![]),
+            Stack::new(vec![Kind { id: 6 }, Kind { id: 6 }, Kind { id: 1 }]),
+            Stack::new(vec![Kind { id: 5 }, Kind { id: 8 }, Kind { id: 6 }]),
+            Stack::new(vec![Kind { id: 8 }, Kind { id: 4 }, Kind { id: 9 }]),
+            Stack::new(vec![
+                Kind { id: 10 },
+                Kind { id: 10 },
+                Kind { id: 8 },
+                Kind { id: 6 },
+                Kind { id: 1 },
+            ]),
+            Stack::new(vec![
+                Kind { id: 2 },
+                Kind { id: 4 },
+                Kind { id: 1 },
+                Kind { id: 10 },
+            ]),
+            Stack::new(vec![Kind { id: 4 }, Kind { id: 2 }, Kind { id: 4 }]),
+        ];
+        let kinds_size = 10;
+        let turn = 1;
+        Game {
+            stacks,
+            kinds_size,
+            turn,
         }
     }
 }
