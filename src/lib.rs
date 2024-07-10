@@ -70,7 +70,10 @@ impl Game {
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut buffer: String = "".to_string();
             for unit in &stack.units {
-                buffer.push_str(format!("{:>2} ", unit.id).as_str());
+                let red = unit.id * 5 * 255 / self.kinds_size;
+                let green = unit.id * 2 * 255 / self.kinds_size;
+                let blue = unit.id * 3 * 255 / self.kinds_size;
+                buffer.push_str(format!("\x1b[38;2;{};{};{}m{:>2}\x1b[0m ",red, green, blue, unit.id).as_str());
             }
             for _ in stack.units.len()..stack.size {
                 buffer.push_str("__ ");
@@ -136,17 +139,23 @@ impl Game {
             let from = match parts[0].parse::<usize>() {
                 Ok(num) if num < self.stacks.len() => num,
                 _ => {
-                    println!("Invalid input for 'from' stack. Enter a number between 0 and {}.", self.stacks.len() - 1);
+                    println!(
+                        "Invalid input for 'from' stack. Enter a number between 0 and {}.",
+                        self.stacks.len() - 1
+                    );
                     continue;
-                },
+                }
             };
 
             let to = match parts[1].parse::<usize>() {
                 Ok(num) if ((num < self.stacks.len()) && (num != from)) => num,
                 _ => {
-                    println!("Invalid input for 'to' stack. Enter another number between 0 and {}.", self.stacks.len() - 1);
+                    println!(
+                        "Invalid input for 'to' stack. Enter another number between 0 and {}.",
+                        self.stacks.len() - 1
+                    );
                     continue;
-                },
+                }
             };
 
             return (from, to);
