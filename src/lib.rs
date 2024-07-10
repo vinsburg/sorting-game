@@ -3,6 +3,8 @@ Let's make a game where you have N stacks of size S, and K kinds where each type
 You may move units from stack s0 to stack p1 if the top stack units are of the same kind k0, and there is room on s1 for all k0 units from s0.
 */
 
+use std::io::{self, Write}; // Import Write for flushing
+
 const DEFAULT_STACK_SIZE: usize = 5;
 
 #[derive(Clone, PartialEq, Eq, Copy)]
@@ -117,19 +119,49 @@ impl Game {
         }
     }
 
+    fn read_valid_input(&self) -> (usize, usize) {
+        loop {
+            print!("Select stacks to move from and to (e.g., '2 3'): ");
+            io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
+
+            let mut input = String::new();
+            io::stdin().read_line(&mut input).unwrap();
+
+            let parts: Vec<&str> = input.trim().split_whitespace().collect();
+            if parts.len() != 2 {
+                println!("Please enter two numbers separated by a space.");
+                continue;
+            }
+
+            let from = match parts[0].parse::<usize>() {
+                Ok(num) => num,
+                Err(_) => {
+                    println!("Invalid input for 'from' stack.");
+                    continue;
+                },
+            };
+
+            let to = match parts[1].parse::<usize>() {
+                Ok(num) => num,
+                Err(_) => {
+                    println!("Invalid input for 'to' stack.");
+                    continue;
+                },
+            };
+
+            return (from, to);
+        }
+    }
+
     pub fn turn_loop(&mut self) {
         loop {
             self.render();
             self.exit_if_player_won();
             let mut from = String::new();
             let mut to = String::new();
+
             println!("Turn {} -", self.turn);
-            println!("Select stack to move from:");
-            std::io::stdin().read_line(&mut from).unwrap();
-            println!("Select stack to move to:");
-            std::io::stdin().read_line(&mut to).unwrap();
-            let from: usize = from.trim().parse().unwrap();
-            let to: usize = to.trim().parse().unwrap();
+            let (from, to) = self.read_valid_input();
             self.make_a_move(from, to);
         }
     }
