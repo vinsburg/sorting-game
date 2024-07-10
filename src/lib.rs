@@ -75,7 +75,7 @@ impl Game {
             for _ in stack.units.len()..stack.size {
                 buffer.push_str("__ ");
             }
-            println!("{:>2}: {}", stack_ind, buffer.trim_end_matches(", "));
+            println!("{:>2}: {}", stack_ind, buffer);
         }
         println!();
     }
