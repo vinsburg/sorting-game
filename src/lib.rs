@@ -134,17 +134,17 @@ impl Game {
             }
 
             let from = match parts[0].parse::<usize>() {
-                Ok(num) => num,
-                Err(_) => {
-                    println!("Invalid input for 'from' stack.");
+                Ok(num) if num < self.stacks.len() => num,
+                _ => {
+                    println!("Invalid input for 'from' stack. Enter a number between 0 and {}.", self.stacks.len() - 1);
                     continue;
                 },
             };
 
             let to = match parts[1].parse::<usize>() {
-                Ok(num) => num,
-                Err(_) => {
-                    println!("Invalid input for 'to' stack.");
+                Ok(num) if ((num < self.stacks.len()) && (num != from)) => num,
+                _ => {
+                    println!("Invalid input for 'to' stack. Enter another number between 0 and {}.", self.stacks.len() - 1);
                     continue;
                 },
             };
@@ -157,9 +157,6 @@ impl Game {
         loop {
             self.render();
             self.exit_if_player_won();
-            let mut from = String::new();
-            let mut to = String::new();
-
             println!("Turn {} -", self.turn);
             let (from, to) = self.read_valid_input();
             self.make_a_move(from, to);
