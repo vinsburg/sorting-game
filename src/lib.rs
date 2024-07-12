@@ -113,7 +113,7 @@ impl Game {
             for _ in stack.units.len()..stack.size {
                 buffer.push_str("__ ");
             }
-            println!("{:>2}: {}", stack_ind, buffer);
+            println!("{:>2}: {}", stack_ind+1, buffer);
         }
         println!();
     }
@@ -172,7 +172,7 @@ impl Game {
             }
 
             let from = match parts[0].parse::<usize>() {
-                Ok(num) if num < self.stacks.len() => num,
+                Ok(num) if num-1 < self.stacks.len() => num-1,
                 _ => {
                     println!(
                         "Invalid input for 'from' stack. Enter a number between 0 and {}.",
@@ -183,7 +183,7 @@ impl Game {
             };
 
             let to = match parts[1].parse::<usize>() {
-                Ok(num) if ((num < self.stacks.len()) && (num != from)) => num,
+                Ok(num) if ((num-1 < self.stacks.len()) && (num-1 != from)) => num-1,
                 _ => {
                     println!(
                         "Invalid input for 'to' stack. Enter another number between 0 and {}.",
