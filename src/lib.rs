@@ -3,6 +3,7 @@ Let's make a game where you have N stacks of size S, and K kinds where each type
 You may move units from stack s0 to stack p1 if the top stack units are of the same kind k0, and there is room on s1 for all k0 units from s0.
 */
 
+use std::collections::HashSet;
 use std::io::{self, Write}; // Import Write for flushing
 
 const DEFAULT_STACK_SIZE: usize = 5;
@@ -62,9 +63,30 @@ pub struct Game {
     stacks: Vec<Stack>,
     kinds_size: usize,
     turn: usize,
+    _colors: Vec<String>,
 }
 
 impl Game {
+    fn new(stacks: Vec<Stack>) -> Game {
+        let kinds_size = Game::count_kinds(&stacks);
+        Game {
+            stacks,
+            kinds_size,
+            turn: 1,
+            _colors: vec!["".to_string()],
+        }
+    }
+
+    fn count_kinds(stacks: &[Stack]) -> usize {
+        let mut kinds: HashSet<usize> = HashSet::new();
+        for stack in stacks {
+            for unit in &stack.units {
+                kinds.insert(unit.id);
+            }
+        }
+        kinds.len()
+    }
+
     fn render(&self) {
         println!();
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
@@ -73,7 +95,13 @@ impl Game {
                 let red = unit.id * 5 * 255 / self.kinds_size;
                 let green = unit.id * 2 * 255 / self.kinds_size;
                 let blue = unit.id * 3 * 255 / self.kinds_size;
-                buffer.push_str(format!("\x1b[38;2;{};{};{}m{:>2}\x1b[0m ",red, green, blue, unit.id).as_str());
+                buffer.push_str(
+                    format!(
+                        "\x1b[38;2;{};{};{}m{:>2}\x1b[0m ",
+                        red, green, blue, unit.id
+                    )
+                    .as_str(),
+                );
             }
             for _ in stack.units.len()..stack.size {
                 buffer.push_str("__ ");
@@ -228,12 +256,6 @@ impl Game {
             ]),
             Stack::new(vec![Kind { id: 4 }, Kind { id: 2 }, Kind { id: 4 }]),
         ];
-        let kinds_size = 10;
-        let turn = 1;
-        Game {
-            stacks,
-            kinds_size,
-            turn,
-        }
+        Game::new(stacks)
     }
 }
