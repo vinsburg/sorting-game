@@ -103,17 +103,25 @@ impl Game {
     }
 
     fn render(&self) {
-        println!();
+        // Clear the screen and move the cursor to the top-left corner
+        print!("\x1B[2J\x1B[H");
+        io::stdout().flush().unwrap(); // Ensure the screen is cleared immediately
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut buffer: String = "".to_string();
             for unit in &stack.units {
                 let color = self._colors[unit.id % self._colors.len()].clone();
-                buffer.push_str(format!("\x1b[38;2;{};{};{}m{:>2}\x1b[0m ", color[0], color[1], color[2], unit.id).as_str());
+                buffer.push_str(
+                    format!(
+                        "\x1b[38;2;{};{};{}m{:>2}\x1b[0m ",
+                        color[0], color[1], color[2], unit.id
+                    )
+                    .as_str(),
+                );
             }
             for _ in stack.units.len()..stack.size {
                 buffer.push_str("__ ");
             }
-            println!("{:>2}: {}", stack_ind+1, buffer);
+            println!("{:>2}: {}", stack_ind + 1, buffer);
         }
         println!();
     }
@@ -172,7 +180,7 @@ impl Game {
             }
 
             let from = match parts[0].parse::<usize>() {
-                Ok(num) if num-1 < self.stacks.len() => num-1,
+                Ok(num) if num - 1 < self.stacks.len() => num - 1,
                 _ => {
                     println!(
                         "Invalid input for 'from' stack. Enter a number between 0 and {}.",
@@ -183,7 +191,7 @@ impl Game {
             };
 
             let to = match parts[1].parse::<usize>() {
-                Ok(num) if ((num-1 < self.stacks.len()) && (num-1 != from)) => num-1,
+                Ok(num) if ((num - 1 < self.stacks.len()) && (num - 1 != from)) => num - 1,
                 _ => {
                     println!(
                         "Invalid input for 'to' stack. Enter another number between 0 and {}.",
