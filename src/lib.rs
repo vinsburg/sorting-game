@@ -215,62 +215,36 @@ impl Game {
         }
     }
 
+    fn vecs_to_stacks(vecs: Vec<Vec<usize>>) -> Vec<Stack> {
+        let mut stacks: Vec<Stack> = Vec::new();
+        for vec in vecs {
+            let mut units: Vec<Kind> = Vec::new();
+            for unit_id in vec {
+                units.push(Kind { id: unit_id });
+            }
+            stacks.push(Stack::new(units));
+        }
+        stacks
+    }
+
     pub fn game_0() -> Game {
-        let stacks = vec![
-            Stack::new(vec![Kind { id: 1 }, Kind { id: 2 }, Kind { id: 3 }]),
-            Stack::new(vec![
-                Kind { id: 5 },
-                Kind { id: 5 },
-                Kind { id: 3 },
-                Kind { id: 3 },
-                Kind { id: 4 },
-            ]),
-            Stack::new(vec![
-                Kind { id: 6 },
-                Kind { id: 7 },
-                Kind { id: 8 },
-                Kind { id: 2 },
-                Kind { id: 8 },
-            ]),
-            Stack::new(vec![Kind { id: 9 }, Kind { id: 7 }, Kind { id: 7 }]),
-            Stack::new(vec![
-                Kind { id: 2 },
-                Kind { id: 7 },
-                Kind { id: 1 },
-                Kind { id: 10 },
-            ]),
-            Stack::new(vec![
-                Kind { id: 9 },
-                Kind { id: 5 },
-                Kind { id: 5 },
-                Kind { id: 3 },
-                Kind { id: 9 },
-            ]),
-            Stack::new(vec![
-                Kind { id: 7 },
-                Kind { id: 3 },
-                Kind { id: 10 },
-                Kind { id: 9 },
-            ]),
-            Stack::new(vec![]),
-            Stack::new(vec![Kind { id: 6 }, Kind { id: 6 }, Kind { id: 1 }]),
-            Stack::new(vec![Kind { id: 5 }, Kind { id: 8 }, Kind { id: 6 }]),
-            Stack::new(vec![Kind { id: 8 }, Kind { id: 4 }, Kind { id: 9 }]),
-            Stack::new(vec![
-                Kind { id: 10 },
-                Kind { id: 10 },
-                Kind { id: 8 },
-                Kind { id: 6 },
-                Kind { id: 1 },
-            ]),
-            Stack::new(vec![
-                Kind { id: 2 },
-                Kind { id: 4 },
-                Kind { id: 1 },
-                Kind { id: 10 },
-            ]),
-            Stack::new(vec![Kind { id: 4 }, Kind { id: 2 }, Kind { id: 4 }]),
+        let vec_stacks = vec![
+            vec![1, 2, 3],
+            vec![5, 5, 3, 3, 4],
+            vec![6, 7, 8, 2, 8],
+            vec![9, 7, 7],
+            vec![2, 7, 1, 10],
+            vec![9, 5, 5, 3, 9],
+            vec![7, 3, 10, 9],
+            vec![],
+            vec![6, 6, 1],
+            vec![5, 8, 6],
+            vec![8, 4, 9],
+            vec![10, 10, 8, 6, 1],
+            vec![2, 4, 1, 10],
+            vec![4, 2, 4],
         ];
+        let stacks = Game::vecs_to_stacks(vec_stacks);
         Game::new(stacks)
     }
 }
