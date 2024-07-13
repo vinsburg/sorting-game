@@ -166,11 +166,11 @@ impl Game {
     }
 
     fn read_valid_input(&self) -> (usize, usize) {
+        let mut input = String::new();
         loop {
             print!("Select stacks to move from and to (e.g., '2 3'): ");
             io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
-
-            let mut input = String::new();
+            input.clear();
             io::stdin().read_line(&mut input).unwrap();
 
             let parts: Vec<&str> = input.trim().split_whitespace().collect();
