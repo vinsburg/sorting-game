@@ -63,7 +63,7 @@ pub struct Game {
     stacks: Vec<Stack>,
     kinds_size: usize,
     turn: usize,
-    _colors: Vec<Vec<usize>>,
+    colors: Vec<Vec<usize>>,
 }
 
 impl Game {
@@ -73,7 +73,7 @@ impl Game {
             stacks,
             kinds_size,
             turn: 1,
-            _colors: vec![
+            colors: vec![
                 vec![255, 255, 255],
                 vec![255, 0, 0],
                 vec![0, 255, 0],
@@ -109,7 +109,7 @@ impl Game {
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut buffer: String = "".to_string();
             for unit in &stack.units {
-                let color = self._colors[unit.id % self._colors.len()].clone();
+                let color = self.colors[unit.id % self.colors.len()].clone();
                 buffer.push_str(
                     format!(
                         "\x1b[38;2;{};{};{}m{:>2}\x1b[0m ",
