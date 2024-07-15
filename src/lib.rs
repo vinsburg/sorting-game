@@ -62,6 +62,7 @@ impl Stack {
 pub struct Game {
     stacks: Vec<Stack>,
     kinds_size: usize,
+    kinds_status: usize,
     turn: usize,
     colors: Vec<Vec<usize>>,
 }
@@ -72,6 +73,7 @@ impl Game {
         Game {
             stacks,
             kinds_size,
+            kinds_status: 0,
             turn: 1,
             colors: vec![
                 vec![255, 255, 255],
@@ -149,13 +151,13 @@ impl Game {
         if occupants.len() < self.stacks[to].size {
             self.stacks[to].push_occupants(occupants);
         } else {
-            println!("\nKind \"{}\" cleared!", from_top_occupant.id);
-            self.kinds_size -= 1;
+            // println!("\nKind \"{}\" cleared!", from_top_occupant.id);
+            self.kinds_status |= 1 << (from_top_occupant.id - 1);
         }
     }
 
     fn game_is_over(&self) -> bool {
-        self.kinds_size == 0
+        self.kinds_status == (1 << self.kinds_size) - 1
     }
 
     fn exit_if_player_won(&self) {
