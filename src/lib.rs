@@ -148,12 +148,10 @@ impl Game {
         }
 
         self.stacks[to].pop_top_occupants(occupants);
-        if occupants.len() < self.stacks[to].size {
-            self.stacks[to].push_occupants(occupants);
-        } else {
-            // println!("\nKind \"{}\" cleared!", from_top_occupant.id);
+        if occupants.len() == self.stacks[to].size {
             self.kinds_status |= 1 << (from_top_occupant.id - 1);
         }
+        self.stacks[to].push_occupants(occupants);
     }
 
     fn game_is_over(&self) -> bool {
@@ -162,7 +160,7 @@ impl Game {
 
     fn exit_if_player_won(&self) {
         if self.game_is_over() {
-            println!("All Kinds Cleared! - You won!");
+            println!("All Stacks Sorted! - You Won!");
             std::process::exit(0);
         }
     }
