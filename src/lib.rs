@@ -6,7 +6,7 @@ You may move units from stack s0 to stack p1 if the top stack units are of the s
 use std::collections::HashSet;
 use std::io::{self, Write}; // Import Write for flushing
 
-const DEFAULT_STACK_SIZE: usize = 5;
+const DEFAULT_STACK_SIZE: usize = 5;  // TODO: Input interpret 0 is empty slots and read stack size from vecs
 
 #[derive(Clone, PartialEq, Eq, Copy)]
 struct Kind {
@@ -20,13 +20,6 @@ struct Stack {
 
 #[allow(dead_code)]
 impl Stack {
-    fn new(units: Vec<Kind>) -> Stack {
-        Stack {
-            size: DEFAULT_STACK_SIZE,
-            units,
-        }
-    }
-
     fn is_vacant(&self) -> bool {
         self.units.len() == 0
     }
@@ -223,7 +216,10 @@ impl Game {
             for unit_id in vec {
                 units.push(Kind { id: unit_id });
             }
-            stacks.push(Stack::new(units));
+            stacks.push(Stack {
+                size: DEFAULT_STACK_SIZE,
+                units,
+            });
         }
         stacks
     }
