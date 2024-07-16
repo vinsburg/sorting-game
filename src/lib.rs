@@ -6,7 +6,7 @@ You may move units from stack s0 to stack p1 if the top stack units are of the s
 use std::collections::HashSet;
 use std::io::{self, Write}; // Import Write for flushing
 
-const DEFAULT_STACK_SIZE: usize = 5;  // TODO: Input interpret 0 is empty slots and read stack size from vecs
+const EMPTY_SLOT_VALUE: usize = 0;
 
 #[derive(Clone, PartialEq, Eq, Copy)]
 struct Kind {
@@ -212,12 +212,15 @@ impl Game {
     fn vecs_to_stacks(vecs: Vec<Vec<usize>>) -> Vec<Stack> {
         let mut stacks: Vec<Stack> = Vec::new();
         for vec in vecs {
+            let vec_len = vec.len();
             let mut units: Vec<Kind> = Vec::new();
             for unit_id in vec {
-                units.push(Kind { id: unit_id });
+                if unit_id != EMPTY_SLOT_VALUE {
+                    units.push(Kind { id: unit_id });
+                }
             }
             stacks.push(Stack {
-                size: DEFAULT_STACK_SIZE,
+                size: vec_len,
                 units,
             });
         }
@@ -226,20 +229,20 @@ impl Game {
 
     pub fn game_0() -> Game {
         let vec_stacks = vec![
-            vec![1, 2, 3],
+            vec![1, 2, 3, 0, 0],
             vec![5, 5, 3, 3, 4],
             vec![6, 7, 8, 2, 8],
-            vec![9, 7, 7],
-            vec![2, 7, 1, 10],
+            vec![9, 7, 7, 0, 0],
+            vec![2, 7, 1, 10, 0],
             vec![9, 5, 5, 3, 9],
-            vec![7, 3, 10, 9],
-            vec![],
-            vec![6, 6, 1],
-            vec![5, 8, 6],
-            vec![8, 4, 9],
+            vec![7, 3, 10, 9, 0],
+            vec![0, 0, 0, 0, 0],
+            vec![6, 6, 1, 0, 0],
+            vec![5, 8, 6, 0, 0],
+            vec![8, 4, 9, 0, 0],
             vec![10, 10, 8, 6, 1],
-            vec![2, 4, 1, 10],
-            vec![4, 2, 4],
+            vec![2, 4, 1, 10, 0],
+            vec![4, 2, 4, 0, 0],
         ];
         let stacks = Game::vecs_to_stacks(vec_stacks);
         Game::new(stacks)
