@@ -3,7 +3,7 @@ Let's make a game where you have N stacks of size S, and K kinds where each type
 You may move units from stack s0 to stack p1 if the top stack units are of the same kind k0, and there is room on s1 for all k0 units from s0.
 */
 
-use std::collections::HashSet;
+use std::collections::HashMap;
 use std::io::{self, Write}; // Import Write for flushing
 
 const EMPTY_SLOT_VALUE: usize = 0;
@@ -55,6 +55,7 @@ impl Stack {
 pub struct Game {
     stacks: Vec<Stack>,
     kinds_size: usize,
+    units_per_kind: HashMap<usize, usize>, // Added field
     kinds_status: usize,
     turn: usize,
     colors: Vec<Vec<usize>>,
@@ -62,10 +63,11 @@ pub struct Game {
 
 impl Game {
     fn new(stacks: Vec<Stack>) -> Game {
-        let kinds_size = Game::count_kinds(&stacks);
+        let (kinds_size, units_per_kind) = Game::count_kinds(&stacks); // Updated to receive units_per_kind
         Game {
             stacks,
             kinds_size,
+            units_per_kind,
             kinds_status: 0,
             turn: 1,
             colors: vec![
@@ -88,14 +90,14 @@ impl Game {
         }
     }
 
-    fn count_kinds(stacks: &[Stack]) -> usize {
-        let mut kinds: HashSet<usize> = HashSet::new();
+    fn count_kinds(stacks: &[Stack]) -> (usize, HashMap<usize, usize>) {
+        let mut units_per_kind: HashMap<usize, usize> = HashMap::new(); // Initialize the HashMap
         for stack in stacks {
             for unit in &stack.units {
-                kinds.insert(unit.id);
+                *units_per_kind.entry(unit.id).or_insert(0) += 1; // Populate the HashMap
             }
         }
-        kinds.len()
+        (units_per_kind.len(), units_per_kind)
     }
 
     fn render(&self) {
