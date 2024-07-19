@@ -53,7 +53,6 @@ impl Stack {
 
 pub struct Game {
     stacks: Vec<Stack>,
-    kinds_size: usize,
     units_per_kind: HashMap<usize, usize>, // Added field
     kinds_status: usize,
     turn: usize,
@@ -62,10 +61,9 @@ pub struct Game {
 
 impl Game {
     fn new(stacks: Vec<Stack>) -> Game {
-        let (kinds_size, units_per_kind) = Game::count_kinds(&stacks); // Updated to receive units_per_kind
+        let (_, units_per_kind) = Game::count_kinds(&stacks); // Updated to receive units_per_kind
         Game {
             stacks,
-            kinds_size,
             units_per_kind,
             kinds_status: 0,
             turn: 1,
@@ -150,7 +148,7 @@ impl Game {
     }
 
     fn game_is_over(&self) -> bool {
-        self.kinds_status == (1 << self.kinds_size) - 1
+        self.kinds_status == (1 << self.units_per_kind.len()) - 1
     }
 
     fn exit_if_player_won(&self) {
