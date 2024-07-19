@@ -143,7 +143,7 @@ impl Game {
         }
 
         self.stacks[to].pop_top_occupants(occupants);
-        if occupants.len() == self.stacks[to].size {
+        if occupants.len() == self.units_per_kind[&from_top_occupant.id] {
             self.kinds_status |= 1 << (from_top_occupant.id - 1);
         }
         self.stacks[to].push_occupants(occupants);
