@@ -61,7 +61,7 @@ pub struct Game {
 
 impl Game {
     fn new(stacks: Vec<Stack>) -> Game {
-        let (_, units_per_kind) = Game::count_kinds(&stacks); // Updated to receive units_per_kind
+        let units_per_kind = Game::count_kinds(&stacks); // Updated to receive units_per_kind
         Game {
             stacks,
             units_per_kind,
@@ -87,14 +87,14 @@ impl Game {
         }
     }
 
-    fn count_kinds(stacks: &[Stack]) -> (usize, HashMap<usize, usize>) {
+    fn count_kinds(stacks: &[Stack]) -> HashMap<usize, usize> {
         let mut units_per_kind: HashMap<usize, usize> = HashMap::new(); // Initialize the HashMap
         for stack in stacks {
             for unit in &stack.units {
                 *units_per_kind.entry(unit.id).or_insert(0) += 1; // Populate the HashMap
             }
         }
-        (units_per_kind.len(), units_per_kind)
+        units_per_kind
     }
 
     fn render(&self) {
