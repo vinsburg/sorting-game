@@ -18,7 +18,6 @@ struct Stack {
     units: Vec<Kind>,
 }
 
-#[allow(dead_code)]
 impl Stack {
     fn is_vacant(&self) -> bool {
         self.units.len() == 0
