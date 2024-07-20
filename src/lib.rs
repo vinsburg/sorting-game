@@ -27,7 +27,7 @@ impl Stack {
         self.size - self.units.len()
     }
 
-    fn get_top_occupant_kind(&self) -> Kind {
+    fn get_top_unit_kind(&self) -> Kind {
         if self.units.len() == 0 {
             return Kind { id: 0 };
         } else {
@@ -35,18 +35,18 @@ impl Stack {
         }
     }
 
-    fn pop_top_occupants(&mut self, occupants: &mut Stack) {
-        let top_occupant = self.get_top_occupant_kind();
-        while !self.is_vacant() && self.get_top_occupant_kind() == top_occupant {
+    fn pop_immigrants(&mut self, immigrants: &mut Stack) {
+        let top_immigrant = self.get_top_unit_kind();
+        while !self.is_vacant() && self.get_top_unit_kind() == top_immigrant {
             self.units.pop();
-            occupants.units.push(top_occupant.clone());
+            immigrants.units.push(top_immigrant.clone());
         }
     }
 
-    fn push_occupants(&mut self, occupants: &mut Stack) {
-        while occupants.units.len() != 0 {
-            let occupant = occupants.units.pop().unwrap();
-            self.units.push(occupant);
+    fn push_immigrants(&mut self, immigrants: &mut Stack) {
+        while immigrants.units.len() != 0 {
+            let immigrant = immigrants.units.pop().unwrap();
+            self.units.push(immigrant);
         }
     }
 }
@@ -124,30 +124,30 @@ impl Game {
     fn make_a_move(&mut self, from: usize, to: usize) {
         self.turn += 1;
 
-        let occupants = &mut Stack {
+        let immigrants = &mut Stack {
             size: 0,
             units: Vec::new(),
         };
-        self.stacks[from].pop_top_occupants(occupants);
+        self.stacks[from].pop_immigrants(immigrants);
 
-        let from_top_occupant = occupants.get_top_occupant_kind();
-        let to_top_occupant = self.stacks[to].get_top_occupant_kind();
-        let top_occupants_match = (from_top_occupant == to_top_occupant)
-            || (from_top_occupant.id == 0)
-            || (to_top_occupant.id == 0);
-        let there_is_room = occupants.units.len() <= self.stacks[to].get_vacancy();
+        let top_immigrant = immigrants.get_top_unit_kind();
+        let top_resident = self.stacks[to].get_top_unit_kind();
+        let top_kinds_match = (top_immigrant == top_resident)
+            || (top_immigrant.id == 0)
+            || (top_resident.id == 0);
+        let there_is_room = immigrants.units.len() <= self.stacks[to].get_vacancy();
 
-        if top_occupants_match && there_is_room {
-            self.stacks[to].push_occupants(occupants);
+        if top_kinds_match && there_is_room {
+            self.stacks[to].push_immigrants(immigrants);
         } else {
-            self.stacks[from].push_occupants(occupants);
+            self.stacks[from].push_immigrants(immigrants);
         }
 
-        self.stacks[to].pop_top_occupants(occupants);
-        if occupants.units.len() == self.units_per_kind[&from_top_occupant.id] {
-            self.kinds_status |= 1 << (from_top_occupant.id - 1);
+        self.stacks[to].pop_immigrants(immigrants);
+        if immigrants.units.len() == self.units_per_kind[&top_immigrant.id] {
+            self.kinds_status |= 1 << (top_immigrant.id - 1);
         }
-        self.stacks[to].push_occupants(occupants);
+        self.stacks[to].push_immigrants(immigrants);
     }
 
     fn game_is_over(&self) -> bool {
