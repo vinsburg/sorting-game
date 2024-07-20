@@ -121,6 +121,15 @@ impl Game {
         println!();
     }
 
+    fn move_is_legal(&self, immigrants: &Stack, residents: &Stack) -> bool {
+        let top_immigrant = immigrants.get_top_unit_kind();
+        let top_resident = residents.get_top_unit_kind();
+        let tops_match =
+            (top_immigrant == top_resident) || (top_immigrant.id == 0) || (top_resident.id == 0);
+        let there_is_room = immigrants.units.len() <= residents.get_vacancy();
+        tops_match && there_is_room
+    }
+
     fn make_a_move(&mut self, from: usize, to: usize) {
         self.turn += 1;
 
@@ -130,21 +139,19 @@ impl Game {
         };
         self.stacks[from].pop_immigrants(immigrants);
 
-        let top_immigrant = immigrants.get_top_unit_kind();
-        let top_resident = self.stacks[to].get_top_unit_kind();
-        let top_kinds_match = (top_immigrant == top_resident)
-            || (top_immigrant.id == 0)
-            || (top_resident.id == 0);
-        let there_is_room = immigrants.units.len() <= self.stacks[to].get_vacancy();
+        let move_is_legal = self.move_is_legal(&immigrants, &self.stacks[to]);
 
-        if top_kinds_match && there_is_room {
+        if move_is_legal {
             self.stacks[to].push_immigrants(immigrants);
         } else {
             self.stacks[from].push_immigrants(immigrants);
         }
 
         self.stacks[to].pop_immigrants(immigrants);
-        if immigrants.units.len() == self.units_per_kind[&top_immigrant.id] {
+        let top_immigrant: Kind = immigrants.get_top_unit_kind();
+        if (top_immigrant.id != EMPTY_SLOT_VALUE)
+            && (immigrants.units.len() == self.units_per_kind[&top_immigrant.id])
+        {
             self.kinds_status |= 1 << (top_immigrant.id - 1);
         }
         self.stacks[to].push_immigrants(immigrants);
