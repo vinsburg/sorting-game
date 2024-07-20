@@ -128,9 +128,9 @@ impl Game {
             size: 0,
             units: Vec::new(),
         };
-        let from_top_occupant = self.stacks[from].get_top_occupant_kind();
         self.stacks[from].pop_top_occupants(occupants);
 
+        let from_top_occupant = occupants.get_top_occupant_kind();
         let to_top_occupant = self.stacks[to].get_top_occupant_kind();
         let top_occupants_match = (from_top_occupant == to_top_occupant)
             || (from_top_occupant.id == 0)
