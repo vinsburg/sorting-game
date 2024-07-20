@@ -124,8 +124,9 @@ impl Game {
     fn move_is_legal(&self, immigrants: &Stack, residents: &Stack) -> bool {
         let top_immigrant = immigrants.get_top_unit_kind();
         let top_resident = residents.get_top_unit_kind();
-        let tops_match =
-            (top_immigrant == top_resident) || (top_immigrant.id == 0) || (top_resident.id == 0);
+        let tops_match = (top_immigrant == top_resident)
+            || (top_immigrant.id == EMPTY_SLOT_VALUE)  // TODO: use dedicated method instead of id comparison
+            || (top_resident.id == EMPTY_SLOT_VALUE); // TODO: use dedicated method instead of id comparison
         let there_is_room = immigrants.units.len() <= residents.get_vacancy();
         tops_match && there_is_room
     }
@@ -149,7 +150,7 @@ impl Game {
 
         self.stacks[to].pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.get_top_unit_kind();
-        if (top_immigrant.id != EMPTY_SLOT_VALUE)
+        if (top_immigrant.id != EMPTY_SLOT_VALUE)  // TODO: use dedicated method instead of id comparison
             && (immigrants.units.len() == self.units_per_kind[&top_immigrant.id])
         {
             self.kinds_status |= 1 << (top_immigrant.id - 1);
@@ -225,6 +226,7 @@ impl Game {
             let mut units: Vec<Kind> = Vec::new();
             for unit_id in vec {
                 if unit_id != EMPTY_SLOT_VALUE {
+                    // TODO: use dedicated method instead of id comparison
                     units.push(Kind { id: unit_id });
                 }
             }
