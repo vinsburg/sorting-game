@@ -129,11 +129,10 @@ impl Game {
         self.stacks[from].pop_top_occupants(occupants);
 
         let to_top_occupant = self.stacks[to].get_top_occupant_kind();
-        let to_vacancy: usize = self.stacks[to].get_vacancy();
         let top_occupants_match = (from_top_occupant == to_top_occupant)
             || (from_top_occupant.id == 0)
             || (to_top_occupant.id == 0);
-        let there_is_room = to_vacancy >= occupants.len();
+        let there_is_room = occupants.len() <= self.stacks[to].get_vacancy();
 
         if top_occupants_match && there_is_room {
             self.stacks[to].push_occupants(occupants);
