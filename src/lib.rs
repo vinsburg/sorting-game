@@ -128,16 +128,17 @@ impl Game {
         let from_top_occupant = self.stacks[from].get_top_occupant_kind();
         self.stacks[from].pop_top_occupants(occupants);
 
-        if !self.stacks[to].is_vacant() {
-            let to_top_occupant = self.stacks[to].get_top_occupant_kind();
-            let to_vacancy: usize = self.stacks[to].get_vacancy();
-            if (from_top_occupant != to_top_occupant) || (to_vacancy < occupants.len()) {
-                self.stacks[from].push_occupants(occupants);
-            }
-        }
+        let to_top_occupant = self.stacks[to].get_top_occupant_kind();
+        let to_vacancy: usize = self.stacks[to].get_vacancy();
+        let top_occupants_match = (from_top_occupant == to_top_occupant)
+            || (from_top_occupant.id == 0)
+            || (to_top_occupant.id == 0);
+        let there_is_room = to_vacancy >= occupants.len();
 
-        if occupants.len() != 0 {
+        if top_occupants_match && there_is_room {
             self.stacks[to].push_occupants(occupants);
+        } else {
+            self.stacks[from].push_occupants(occupants);
         }
 
         self.stacks[to].pop_top_occupants(occupants);
