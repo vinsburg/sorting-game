@@ -35,17 +35,17 @@ impl Stack {
         }
     }
 
-    fn pop_top_occupants(&mut self, occupants: &mut Vec<Kind>) {
+    fn pop_top_occupants(&mut self, occupants: &mut Stack) {
         let top_occupant = self.get_top_occupant_kind();
         while !self.is_vacant() && self.get_top_occupant_kind() == top_occupant {
             self.units.pop();
-            occupants.push(top_occupant.clone());
+            occupants.units.push(top_occupant.clone());
         }
     }
 
-    fn push_occupants(&mut self, occupants: &mut Vec<Kind>) {
-        while occupants.len() != 0 {
-            let occupant = occupants.pop().unwrap();
+    fn push_occupants(&mut self, occupants: &mut Stack) {
+        while occupants.units.len() != 0 {
+            let occupant = occupants.units.pop().unwrap();
             self.units.push(occupant);
         }
     }
@@ -124,7 +124,10 @@ impl Game {
     fn make_a_move(&mut self, from: usize, to: usize) {
         self.turn += 1;
 
-        let occupants = &mut Vec::new();
+        let occupants = &mut Stack {
+            size: 0,
+            units: Vec::new(),
+        };
         let from_top_occupant = self.stacks[from].get_top_occupant_kind();
         self.stacks[from].pop_top_occupants(occupants);
 
@@ -132,7 +135,7 @@ impl Game {
         let top_occupants_match = (from_top_occupant == to_top_occupant)
             || (from_top_occupant.id == 0)
             || (to_top_occupant.id == 0);
-        let there_is_room = occupants.len() <= self.stacks[to].get_vacancy();
+        let there_is_room = occupants.units.len() <= self.stacks[to].get_vacancy();
 
         if top_occupants_match && there_is_room {
             self.stacks[to].push_occupants(occupants);
@@ -141,7 +144,7 @@ impl Game {
         }
 
         self.stacks[to].pop_top_occupants(occupants);
-        if occupants.len() == self.units_per_kind[&from_top_occupant.id] {
+        if occupants.units.len() == self.units_per_kind[&from_top_occupant.id] {
             self.kinds_status |= 1 << (from_top_occupant.id - 1);
         }
         self.stacks[to].push_occupants(occupants);
