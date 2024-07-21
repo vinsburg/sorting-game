@@ -8,9 +8,15 @@ use std::io::{self, Write}; // Import Write for flushing
 
 const EMPTY_SLOT_VALUE: usize = 0;
 
-#[derive(Clone, PartialEq, Eq, Copy)]
+#[derive(Clone, PartialEq, Eq, Copy, Hash)]
 struct Kind {
     id: usize,
+}
+
+impl Kind {
+    fn is_empty(&self) -> bool {
+        self.id == EMPTY_SLOT_VALUE
+    }
 }
 
 struct Stack {
@@ -53,7 +59,7 @@ impl Stack {
 
 pub struct Game {
     stacks: Vec<Stack>,
-    units_per_kind: HashMap<usize, usize>, // Added field
+    units_per_kind: HashMap<usize, usize>,  // TODO use hashable kinds instead of usize.
     kinds_status: usize,
     turn: usize,
     colors: Vec<Vec<usize>>,
@@ -124,9 +130,8 @@ impl Game {
     fn move_is_legal(&self, immigrants: &Stack, residents: &Stack) -> bool {
         let top_immigrant = immigrants.get_top_unit_kind();
         let top_resident = residents.get_top_unit_kind();
-        let tops_match = (top_immigrant == top_resident)
-            || (top_immigrant.id == EMPTY_SLOT_VALUE)  // TODO: use dedicated method instead of id comparison
-            || (top_resident.id == EMPTY_SLOT_VALUE); // TODO: use dedicated method instead of id comparison
+        let tops_match =
+            (top_immigrant == top_resident) || top_immigrant.is_empty() || top_resident.is_empty();
         let there_is_room = immigrants.units.len() <= residents.get_vacancy();
         tops_match && there_is_room
     }
@@ -150,7 +155,7 @@ impl Game {
 
         self.stacks[to].pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.get_top_unit_kind();
-        if (top_immigrant.id != EMPTY_SLOT_VALUE)  // TODO: use dedicated method instead of id comparison
+        if !top_immigrant.is_empty()
             && (immigrants.units.len() == self.units_per_kind[&top_immigrant.id])
         {
             self.kinds_status |= 1 << (top_immigrant.id - 1);
@@ -225,9 +230,9 @@ impl Game {
             let vec_len = vec.len();
             let mut units: Vec<Kind> = Vec::new();
             for unit_id in vec {
-                if unit_id != EMPTY_SLOT_VALUE {
-                    // TODO: use dedicated method instead of id comparison
-                    units.push(Kind { id: unit_id });
+                let kind = Kind { id: unit_id };
+                if !kind.is_empty() {
+                    units.push(kind);
                 }
             }
             stacks.push(Stack {
