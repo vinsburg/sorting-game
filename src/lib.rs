@@ -59,7 +59,7 @@ impl Stack {
 
 pub struct Game {
     stacks: Vec<Stack>,
-    units_per_kind: HashMap<usize, usize>,  // TODO use hashable kinds instead of usize.
+    units_per_kind: HashMap<Kind, usize>,
     kinds_status: usize,
     turn: usize,
     colors: Vec<Vec<usize>>,
@@ -67,7 +67,7 @@ pub struct Game {
 
 impl Game {
     fn new(stacks: Vec<Stack>) -> Game {
-        let units_per_kind = Game::count_kinds(&stacks); // Updated to receive units_per_kind
+        let units_per_kind = Game::count_kinds(&stacks);
         Game {
             stacks,
             units_per_kind,
@@ -93,11 +93,11 @@ impl Game {
         }
     }
 
-    fn count_kinds(stacks: &[Stack]) -> HashMap<usize, usize> {
-        let mut units_per_kind: HashMap<usize, usize> = HashMap::new(); // Initialize the HashMap
+    fn count_kinds(stacks: &[Stack]) -> HashMap<Kind, usize> {
+        let mut units_per_kind: HashMap<Kind, usize> = HashMap::new(); // Initialize the HashMap
         for stack in stacks {
             for unit in &stack.units {
-                *units_per_kind.entry(unit.id).or_insert(0) += 1; // Populate the HashMap
+                *units_per_kind.entry(*unit).or_insert(0) += 1; // Populate the HashMap
             }
         }
         units_per_kind
@@ -156,7 +156,7 @@ impl Game {
         self.stacks[to].pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.get_top_unit_kind();
         if !top_immigrant.is_empty()
-            && (immigrants.units.len() == self.units_per_kind[&top_immigrant.id])
+            && (immigrants.units.len() == self.units_per_kind[&top_immigrant])
         {
             self.kinds_status |= 1 << (top_immigrant.id - 1);
         }
