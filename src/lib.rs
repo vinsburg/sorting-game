@@ -111,7 +111,7 @@ impl Game {
 
     fn index_kinds(units_per_kind: &HashMap<Kind, usize>) -> HashMap<Kind, usize> {
         let mut kind_indices: HashMap<Kind, usize> = HashMap::new();
-        for (index, kind) in units_per_kind.keys().enumerate() {
+        for (index, kind) in units_per_kind.keys().enumerate() {  // TODO: sort keys by kind.id
             kind_indices.insert(*kind, index + 1);
         }
         kind_indices
