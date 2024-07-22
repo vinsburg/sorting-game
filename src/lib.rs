@@ -4,7 +4,7 @@ You may move units from stack s0 to stack p1 if the top stack units are of the s
 */
 
 use std::collections::HashMap;
-use std::io::{self, Write}; // Import Write for flushing
+use std::io::{self, Write};
 
 const EMPTY_SLOT_VALUE: usize = 0;
 
@@ -82,12 +82,15 @@ impl Game {
                 vec![0, 255, 255],
                 vec![255, 0, 255],
                 // vec![127, 255, 0],
-                vec![0, 127, 255],
+                // vec![0, 127, 255],
                 // vec![255, 0, 127],
+                vec![255, 127, 0],
+                vec![0, 255, 127],
+                vec![127, 0, 255],
                 vec![255, 127, 127],
                 vec![127, 255, 127],
-                vec![127, 127, 127],
                 // vec![127, 127, 255],
+                vec![127, 127, 127],
                 // vec![0, 0, 0],
             ],
         }
@@ -167,11 +170,12 @@ impl Game {
         self.kinds_status == (1 << self.units_per_kind.len()) - 1
     }
 
-    fn exit_if_player_won(&self) {
-        if self.game_is_over() {
+    fn display_game_end(&self) -> bool{
+        let game_is_over = self.game_is_over();
+        if game_is_over {
             println!("All Stacks Sorted! - You Won!");
-            std::process::exit(0);
         }
+        game_is_over
     }
 
     fn read_valid_input(&self) -> (usize, usize) {
@@ -217,7 +221,9 @@ impl Game {
     pub fn turn_loop(&mut self) {
         loop {
             self.render();
-            self.exit_if_player_won();
+            if self.display_game_end() {
+                break;
+            }
             println!("Turn {} -", self.turn);
             let (from, to) = self.read_valid_input();
             self.make_a_move(from, to);
@@ -244,11 +250,7 @@ impl Game {
     }
 
     pub fn game_0() -> Game {
-        let vec_stacks = vec![
-            vec![2, 1, 0,],
-            vec![1, 2, 0,],
-            vec![2, 0,],
-        ];
+        let vec_stacks = vec![vec![2, 1, 0], vec![1, 2, 0], vec![2, 0]];
         let stacks = Game::vecs_to_stacks(vec_stacks);
         Game::new(stacks)
     }
