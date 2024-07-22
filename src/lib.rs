@@ -245,6 +245,16 @@ impl Game {
 
     pub fn game_0() -> Game {
         let vec_stacks = vec![
+            vec![2, 1, 0,],
+            vec![1, 2, 0,],
+            vec![2, 0,],
+        ];
+        let stacks = Game::vecs_to_stacks(vec_stacks);
+        Game::new(stacks)
+    }
+
+    pub fn game_1() -> Game {
+        let vec_stacks = vec![
             vec![1, 2, 3, 0, 0],
             vec![5, 5, 3, 3, 4],
             vec![6, 7, 8, 2, 8],
