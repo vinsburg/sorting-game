@@ -60,6 +60,7 @@ impl Stack {
 pub struct Game {
     stacks: Vec<Stack>,
     units_per_kind: HashMap<Kind, usize>,
+    kind_indices: HashMap<Kind, usize>,
     kinds_status: usize,
     turn: usize,
     colors: Vec<Vec<usize>>,
@@ -68,13 +69,15 @@ pub struct Game {
 impl Game {
     fn new(stacks: Vec<Stack>) -> Game {
         let units_per_kind = Game::count_kinds(&stacks);
+        let kind_indices = Game::index_kinds(&units_per_kind);
         Game {
             stacks,
             units_per_kind,
+            kind_indices,
             kinds_status: 0,
             turn: 1,
             colors: vec![
-                vec![255, 255, 255],
+                vec![127, 127, 127],
                 vec![255, 0, 0],
                 vec![0, 255, 0],
                 vec![0, 0, 255],
@@ -90,7 +93,7 @@ impl Game {
                 vec![255, 127, 127],
                 vec![127, 255, 127],
                 // vec![127, 127, 255],
-                vec![127, 127, 127],
+                vec![255, 255, 255],
                 // vec![0, 0, 0],
             ],
         }
@@ -106,6 +109,14 @@ impl Game {
         units_per_kind
     }
 
+    fn index_kinds(units_per_kind: &HashMap<Kind, usize>) -> HashMap<Kind, usize> {
+        let mut kind_indices: HashMap<Kind, usize> = HashMap::new();
+        for (index, kind) in units_per_kind.keys().enumerate() {
+            kind_indices.insert(*kind, index + 1);
+        }
+        kind_indices
+    }
+
     fn render(&self) {
         // Clear the screen and move the cursor to the top-left corner
         print!("\x1B[2J\x1B[H");
@@ -113,7 +124,8 @@ impl Game {
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut buffer: String = "".to_string();
             for unit in &stack.units {
-                let color = self.colors[unit.id % self.colors.len()].clone();
+                let unit_index = self.kind_indices[unit];
+                let color = self.colors[unit_index % self.colors.len()].clone();
                 buffer.push_str(
                     format!(
                         "\x1b[38;2;{};{};{}m{:>2}\x1b[0m ",
@@ -161,7 +173,7 @@ impl Game {
         if !top_immigrant.is_empty()
             && (immigrants.units.len() == self.units_per_kind[&top_immigrant])
         {
-            self.kinds_status |= 1 << (top_immigrant.id - 1);
+            self.kinds_status |= 1 << (self.kind_indices[&top_immigrant] - 1);
         }
         self.stacks[to].push_immigrants(immigrants);
     }
@@ -170,7 +182,7 @@ impl Game {
         self.kinds_status == (1 << self.units_per_kind.len()) - 1
     }
 
-    fn display_game_end(&self) -> bool{
+    fn display_game_end(&self) -> bool {
         let game_is_over = self.game_is_over();
         if game_is_over {
             println!("All Stacks Sorted! - You Won!");
