@@ -33,7 +33,7 @@ impl Stack {
         self.size - self.units.len()
     }
 
-    fn get_top_unit_kind(&self) -> Kind {
+    fn clone_top_unit(&self) -> Kind {
         if self.units.len() == 0 {
             return Kind { id: 0 };
         } else {
@@ -42,8 +42,8 @@ impl Stack {
     }
 
     fn pop_immigrants(&mut self, immigrants: &mut Stack) {
-        let top_immigrant = self.get_top_unit_kind();
-        while !self.is_vacant() && self.get_top_unit_kind() == top_immigrant {
+        let top_immigrant = self.clone_top_unit();
+        while !self.is_vacant() && self.clone_top_unit() == top_immigrant {
             self.units.pop();
             immigrants.units.push(top_immigrant.clone());
         }
@@ -128,8 +128,8 @@ impl Game {
     }
 
     fn move_is_legal(&self, immigrants: &Stack, residents: &Stack) -> bool {
-        let top_immigrant = immigrants.get_top_unit_kind();
-        let top_resident = residents.get_top_unit_kind();
+        let top_immigrant = immigrants.clone_top_unit();
+        let top_resident = residents.clone_top_unit();
         let tops_match =
             (top_immigrant == top_resident) || top_immigrant.is_empty() || top_resident.is_empty();
         let there_is_room = immigrants.units.len() <= residents.get_vacancy();
@@ -154,7 +154,7 @@ impl Game {
         }
 
         self.stacks[to].pop_immigrants(immigrants);
-        let top_immigrant: Kind = immigrants.get_top_unit_kind();
+        let top_immigrant: Kind = immigrants.clone_top_unit();
         if !top_immigrant.is_empty()
             && (immigrants.units.len() == self.units_per_kind[&top_immigrant])
         {
@@ -273,7 +273,6 @@ impl Game {
             vec![2, 7, 1, 10, 0],
             vec![9, 5, 5, 3, 9],
             vec![7, 3, 10, 9, 0],
-            // vec![0, 0, 0, 0, 0],
             vec![6, 6, 1, 0, 0],
             vec![5, 8, 6],
             vec![8, 4, 9],
