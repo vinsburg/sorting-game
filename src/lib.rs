@@ -8,7 +8,7 @@ use std::io::{self, Write};
 
 const EMPTY_SLOT_VALUE: usize = 0;
 
-#[derive(Clone, PartialEq, Eq, Copy, Hash)]
+#[derive(Clone, PartialEq, Eq, Copy, Hash, Ord, PartialOrd)]
 struct Kind {
     id: usize,
 }
@@ -111,8 +111,10 @@ impl Game {
 
     fn index_kinds(units_per_kind: &HashMap<Kind, usize>) -> HashMap<Kind, usize> {
         let mut kind_indices: HashMap<Kind, usize> = HashMap::new();
-        for (index, kind) in units_per_kind.keys().enumerate() {  // TODO: sort keys by kind.id
-            kind_indices.insert(*kind, index + 1);
+        let mut kinds: Vec<&Kind> = units_per_kind.keys().collect();
+        kinds.sort(); // Sort kinds by their id
+        for (index, kind) in kinds.iter().enumerate() {
+            kind_indices.insert(**kind, index + 1);
         }
         kind_indices
     }
