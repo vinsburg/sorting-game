@@ -78,7 +78,6 @@ impl Game {
             kinds_status: 0,
             turn: 1,
             colors: vec![
-                vec![127, 127, 127],
                 vec![255, 0, 0],
                 vec![0, 255, 0],
                 vec![0, 0, 255],
@@ -94,6 +93,7 @@ impl Game {
                 vec![255, 127, 127],
                 vec![127, 255, 127],
                 // vec![127, 127, 255],
+                vec![127, 127, 127],
                 vec![255, 255, 255],
                 // vec![0, 0, 0],
             ],
@@ -115,7 +115,7 @@ impl Game {
         let mut kinds: Vec<&Kind> = units_per_kind.keys().collect();
         kinds.sort(); // Sort kinds by their id
         for (index, kind) in kinds.iter().enumerate() {
-            kind_indices.insert(**kind, index + 1);
+            kind_indices.insert(**kind, index);
         }
         kind_indices
     }
@@ -176,7 +176,7 @@ impl Game {
         if !top_immigrant.is_empty()
             && (immigrants.units.len() == self.units_per_kind[&top_immigrant])
         {
-            self.kinds_status |= 1 << (self.kind_indices[&top_immigrant] - 1);
+            self.kinds_status |= 1 << self.kind_indices[&top_immigrant];
         }
         self.stacks[to].push_immigrants(immigrants);
     }
