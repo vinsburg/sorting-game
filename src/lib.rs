@@ -26,7 +26,7 @@ impl Stack {
 
     fn clone_top_unit(&self) -> Kind {
         if self.units.len() == 0 {
-            return Kind { id: 0 };
+            return Kind::new_empty();
         } else {
             return self.units.last().unwrap().clone();
         }
@@ -122,7 +122,10 @@ impl Game {
                 buffer.push_str(
                     format!(
                         "\x1b[38;2;{};{};{}m{:>2}\x1b[0m ",
-                        color[0], color[1], color[2], unit.id
+                        color[0],
+                        color[1],
+                        color[2],
+                        unit.get_id()
                     )
                     .as_str(),
                 );
@@ -241,7 +244,7 @@ impl Game {
             let vec_len = vec.len();
             let mut units: Vec<Kind> = Vec::new();
             for unit_id in vec {
-                let kind = Kind { id: unit_id };
+                let kind = Kind::new(unit_id);
                 if !kind.is_empty() {
                     units.push(kind);
                 }
