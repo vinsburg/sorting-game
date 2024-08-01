@@ -6,7 +6,7 @@ The goal is for all stacks to be either empty, or contain all units of a single 
 
 mod kind;
 
-pub use kind::Kind;
+use kind::Kind;
 use std::collections::HashMap;
 use std::io::{self, Write};
 
