@@ -5,48 +5,12 @@ The goal is for all stacks to be either empty, or contain all units of a single 
 */
 
 mod kind;
+mod stack;
 
 use kind::Kind;
+use stack::Stack;
 use std::collections::HashMap;
 use std::io::{self, Write};
-
-struct Stack {
-    size: usize,
-    units: Vec<Kind>,
-}
-
-impl Stack {
-    fn is_vacant(&self) -> bool {
-        self.units.len() == 0
-    }
-
-    fn get_vacancy(&self) -> usize {
-        self.size - self.units.len()
-    }
-
-    fn clone_top_unit(&self) -> Kind {
-        if self.units.len() == 0 {
-            return Kind::new_empty();
-        } else {
-            return self.units.last().unwrap().clone();
-        }
-    }
-
-    fn pop_immigrants(&mut self, immigrants: &mut Stack) {
-        let top_immigrant = self.clone_top_unit();
-        while !self.is_vacant() && self.clone_top_unit() == top_immigrant {
-            self.units.pop();
-            immigrants.units.push(top_immigrant.clone());
-        }
-    }
-
-    fn push_immigrants(&mut self, immigrants: &mut Stack) {
-        while immigrants.units.len() != 0 {
-            let immigrant = immigrants.units.pop().unwrap();
-            self.units.push(immigrant);
-        }
-    }
-}
 
 pub struct Game {
     stacks: Vec<Stack>,
