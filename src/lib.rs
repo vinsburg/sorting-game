@@ -4,21 +4,11 @@ You may move units from stack s0 to stack s1 if the top stack units are of the s
 The goal is for all stacks to be either empty, or contain all units of a single kind.
 */
 
+mod kind;
+
+pub use kind::Kind;
 use std::collections::HashMap;
 use std::io::{self, Write};
-
-const EMPTY_SLOT_VALUE: usize = 0;
-
-#[derive(Clone, PartialEq, Eq, Copy, Hash, Ord, PartialOrd)]
-struct Kind {
-    id: usize,
-}
-
-impl Kind {
-    fn is_empty(&self) -> bool {
-        self.id == EMPTY_SLOT_VALUE
-    }
-}
 
 struct Stack {
     size: usize,
