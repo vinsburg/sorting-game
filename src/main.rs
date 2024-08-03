@@ -1,8 +1,12 @@
 use sorting_game::Game;
 
 fn main() {
-    let mut game = Game::game_0();
-    game.turn_loop();
-    game = Game::game_1();
-    game.turn_loop();
+    let games = vec![
+        Game::game_0(),
+        Game::game_1(),
+        Game::game_9(),
+    ];
+    for mut game in games {
+        game.turn_loop();
+    }
 }
