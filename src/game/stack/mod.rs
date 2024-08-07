@@ -1,4 +1,6 @@
-use crate::Kind;
+pub mod kind;
+
+use kind::Kind;
 
 pub struct Stack {
     pub size: usize,

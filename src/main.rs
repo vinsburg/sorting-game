@@ -1,4 +1,4 @@
-use sorting_game::Game;
+use sorting_game::game::Game;
 
 fn main() {
     let games = vec![
