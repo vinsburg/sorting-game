@@ -10,7 +10,7 @@ impl Game {
             let mut buffer: String = "".to_string();
             for unit in &stack.units {
                 let unit_index = self.kind_indices[unit];
-                let color = self.colors[unit_index % self.colors.len()].clone();
+                let color = COLORS[unit_index % COLORS.len()].clone();
                 buffer.push_str(
                     format!(
                         "\x1b[38;2;{};{};{}m{:>2}\x1b[0m ",
@@ -77,27 +77,26 @@ impl Game {
             return (from, to);
         }
     }
-
-    pub fn get_colors() -> Vec<Vec<usize>> {
-        vec![
-            vec![255, 0, 0],
-            vec![0, 255, 0],
-            vec![0, 0, 255],
-            vec![255, 255, 0],
-            vec![0, 255, 255],
-            vec![255, 0, 255],
-            // vec![127, 255, 0],
-            // vec![0, 127, 255],
-            // vec![255, 0, 127],
-            vec![255, 127, 0],
-            vec![0, 255, 127],
-            // vec![127, 0, 255],
-            vec![255, 127, 127],
-            // vec![127, 255, 127],
-            // vec![127, 127, 255],
-            vec![127, 127, 127],
-            vec![255, 255, 255],
-            // vec![0, 0, 0],
-        ]
-    }
 }
+
+#[allow(dead_code)]
+const COLORS: [[u8; 3]; 11] = [
+    [255, 0, 0],
+    [0, 255, 0],
+    [0, 0, 255],
+    [255, 255, 0],
+    [0, 255, 255],
+    [255, 0, 255],
+    // [127, 255, 0],
+    // [0, 127, 255],
+    // [255, 0, 127],
+    [255, 127, 0],
+    [0, 255, 127],
+    // [127, 0, 255],
+    [255, 127, 127],
+    // [127, 255, 127],
+    // [127, 127, 255],
+    [127, 127, 127],
+    [255, 255, 255],
+    // [0, 0, 0],
+];

@@ -17,7 +17,6 @@ pub struct Game {
     kind_indices: HashMap<Kind, usize>,
     kinds_status: usize,
     turn: usize,
-    colors: Vec<Vec<usize>>,
 }
 
 impl Game {
@@ -30,7 +29,6 @@ impl Game {
             kind_indices,
             kinds_status: 0,
             turn: 1,
-            colors: Game::get_colors(),
         }
     }
 
