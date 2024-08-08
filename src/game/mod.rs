@@ -18,6 +18,7 @@ pub struct Game {
     kind_indices: HashMap<Kind, usize>,
     kinds_status: usize,
     turn: usize,
+    name: String,
 }
 
 impl Game {
@@ -30,6 +31,7 @@ impl Game {
             kind_indices,
             kinds_status: 0,
             turn: 1,
+            name: "".to_string(),
         }
     }
 

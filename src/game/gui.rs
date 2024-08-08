@@ -6,6 +6,7 @@ impl Game {
         // Clear the screen and move the cursor to the top-left corner
         print!("\x1B[2J\x1B[H");
         io::stdout().flush().unwrap(); // Ensure the screen is cleared immediately
+        println!("{}\n", self.name);  // Display the game name
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut buffer: String = "".to_string();
             for unit in &stack.units {
