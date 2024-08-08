@@ -22,14 +22,16 @@ impl Game {
         stacks
     }
 
+    fn new_from_vecs(vecs: Vec<Vec<usize>>) -> Game {
+        Game::new(Game::vecs_to_stacks(vecs))
+    }
+
     pub fn stage_0() -> Game {
-        let vec_stacks = vec![vec![2, 1, 0], vec![1, 2, 0], vec![2, 0]];
-        let stacks = Game::vecs_to_stacks(vec_stacks);
-        Game::new(stacks)
+        Game::new_from_vecs(vec![vec![2, 1, 0], vec![1, 2, 0], vec![2, 0]])
     }
 
     pub fn stage_1() -> Game {
-        let vec_stacks = vec![
+        Game::new_from_vecs(vec![
             vec![1, 2, 3, 0, 0],
             vec![5, 5, 3, 3, 4],
             vec![6, 7, 8, 2, 8],
@@ -44,13 +46,11 @@ impl Game {
             vec![10, 10, 8, 6, 1],
             vec![2, 4, 1, 10, 0],
             vec![4, 2, 4, 0, 0],
-        ];
-        let stacks = Game::vecs_to_stacks(vec_stacks);
-        Game::new(stacks)
+        ])
     }
 
     pub fn stage_9() -> Game {
-        let vec_stacks = vec![
+        Game::new_from_vecs(vec![
             vec![1, 2, 3, 0, 0],
             vec![5, 5, 3, 3, 4],
             vec![6, 7, 8, 2, 8],
@@ -64,8 +64,6 @@ impl Game {
             vec![10, 10, 8, 6, 1],
             vec![2, 4, 1, 10, 0],
             vec![4, 2, 4],
-        ];
-        let stacks = Game::vecs_to_stacks(vec_stacks);
-        Game::new(stacks)
+        ])
     }
 }
