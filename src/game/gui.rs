@@ -38,7 +38,8 @@ impl Game {
     pub fn display_game_end(&self) -> bool {
         let game_is_over = self.game_is_over();
         if game_is_over {
-            println!("All Stacks Sorted! - You Won!\nPress Enter to continue, or Ctrl+C to exit.");
+            // TODO: only Print you won when all stages are cleared.
+            println!("All Stacks Sorted! - You Won! 🎉\nPress Enter to continue, or Ctrl+C to exit.");
             io::stdin().read_line(&mut String::new()).unwrap();
         }
         game_is_over
