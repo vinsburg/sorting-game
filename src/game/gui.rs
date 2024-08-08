@@ -6,7 +6,11 @@ impl Game {
         // Clear the screen and move the cursor to the top-left corner
         print!("\x1B[2J\x1B[H");
         io::stdout().flush().unwrap(); // Ensure the screen is cleared immediately
-        println!("{}\n", self.name);  // Display the game name
+        println!("|**************|\n| Sorting Game |\n****************");
+        println!("{}", self.stage_name); // Display the current game name
+        println!("Turn - {}", self.turn);
+        println!();
+
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut buffer: String = "".to_string();
             for unit in &stack.units {
@@ -42,7 +46,6 @@ impl Game {
 
     pub fn read_valid_input(&self) -> (usize, usize) {
         let mut input = String::new();
-        println!("Turn - {}", self.turn);
         loop {
             print!("Select stacks to move from and to (e.g., '2 3'): ");
             io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input

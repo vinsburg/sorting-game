@@ -22,16 +22,13 @@ impl Game {
         stacks
     }
 
-    fn new_from_vecs(vecs: Vec<Vec<usize>>, name: Option<String>) -> Game {
-        Game::new(Game::vecs_to_stacks(vecs), name)
+    fn new_from_vecs(vecs: Vec<Vec<usize>>, stage_name: Option<String>) -> Game {
+        Game::new(Game::vecs_to_stacks(vecs), stage_name)
     }
 
-    pub fn stage_0() -> Game {
-        Game::new_from_vecs(vec![vec![2, 1, 0], vec![1, 2, 0], vec![2, 0]], None)
-    }
-
-    pub fn stage_1() -> Game {
-        Game::new_from_vecs(
+    pub fn get_stages() -> Vec<Game> {
+        let stage_vec = vec![
+            vec![vec![2, 1, 0], vec![1, 2, 0], vec![2, 0]],
             vec![
                 vec![1, 2, 3, 0, 0],
                 vec![5, 5, 3, 3, 4],
@@ -48,12 +45,6 @@ impl Game {
                 vec![2, 4, 1, 10, 0],
                 vec![4, 2, 4, 0, 0],
             ],
-            None,
-        )
-    }
-
-    pub fn stage_9() -> Game {
-        Game::new_from_vecs(
             vec![
                 vec![1, 2, 3, 0, 0],
                 vec![5, 5, 3, 3, 4],
@@ -69,7 +60,12 @@ impl Game {
                 vec![2, 4, 1, 10, 0],
                 vec![4, 2, 4],
             ],
-            None,
-        )
+        ];
+        let mut stages: Vec<Game> = Vec::new();
+        for (ind, vec_stacks) in stage_vec.iter().enumerate() {
+            let name = format!("Stage - {}", ind+1);
+            stages.push(Game::new_from_vecs(vec_stacks.clone(), Some(name)));
+        }
+        stages
     }
 }

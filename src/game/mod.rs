@@ -5,8 +5,8 @@ The goal is for all stacks to be either empty, or contain all units of a single 
 */
 
 mod gui;
-mod stages;
 mod stack;
+mod stages;
 
 use stack::kind::Kind;
 use stack::Stack;
@@ -18,11 +18,11 @@ pub struct Game {
     kind_indices: HashMap<Kind, usize>,
     kinds_status: usize,
     turn: usize,
-    name: String,
+    stage_name: String,
 }
 
 impl Game {
-    fn new(stacks: Vec<Stack>, name: Option<String>) -> Game {
+    fn new(stacks: Vec<Stack>, stage_name: Option<String>) -> Game {
         let units_per_kind = Game::count_kinds(&stacks);
         let kind_indices = Game::index_kinds(&units_per_kind);
         Game {
@@ -31,7 +31,7 @@ impl Game {
             kind_indices,
             kinds_status: 0,
             turn: 1,
-            name: name.unwrap_or("Sorting Game".to_string()),
+            stage_name: stage_name.unwrap_or("".to_string()),
         }
     }
 
@@ -97,6 +97,7 @@ impl Game {
 
     pub fn turn_loop(&mut self) {
         loop {
+            // TODO: do not increment turn when the game has ended.
             self.render();
             if self.display_game_end() {
                 break;
