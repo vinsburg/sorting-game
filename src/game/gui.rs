@@ -42,6 +42,7 @@ impl Game {
 
     pub fn read_valid_input(&self) -> (usize, usize) {
         let mut input = String::new();
+        println!("Turn - {}", self.turn);
         loop {
             print!("Select stacks to move from and to (e.g., '2 3'): ");
             io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input

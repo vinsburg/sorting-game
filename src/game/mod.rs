@@ -22,7 +22,7 @@ pub struct Game {
 }
 
 impl Game {
-    fn new(stacks: Vec<Stack>) -> Game {
+    fn new(stacks: Vec<Stack>, name: Option<String>) -> Game {
         let units_per_kind = Game::count_kinds(&stacks);
         let kind_indices = Game::index_kinds(&units_per_kind);
         Game {
@@ -31,7 +31,7 @@ impl Game {
             kind_indices,
             kinds_status: 0,
             turn: 1,
-            name: "".to_string(),
+            name: name.unwrap_or("Sorting Game".to_string()),
         }
     }
 
@@ -101,7 +101,6 @@ impl Game {
             if self.display_game_end() {
                 break;
             }
-            println!("Turn {} -", self.turn);
             let (from, to) = self.read_valid_input();
             self.make_a_move(from, to);
         }

@@ -22,48 +22,54 @@ impl Game {
         stacks
     }
 
-    fn new_from_vecs(vecs: Vec<Vec<usize>>) -> Game {
-        Game::new(Game::vecs_to_stacks(vecs))
+    fn new_from_vecs(vecs: Vec<Vec<usize>>, name: Option<String>) -> Game {
+        Game::new(Game::vecs_to_stacks(vecs), name)
     }
 
     pub fn stage_0() -> Game {
-        Game::new_from_vecs(vec![vec![2, 1, 0], vec![1, 2, 0], vec![2, 0]])
+        Game::new_from_vecs(vec![vec![2, 1, 0], vec![1, 2, 0], vec![2, 0]], None)
     }
 
     pub fn stage_1() -> Game {
-        Game::new_from_vecs(vec![
-            vec![1, 2, 3, 0, 0],
-            vec![5, 5, 3, 3, 4],
-            vec![6, 7, 8, 2, 8],
-            vec![9, 7, 7, 0, 0],
-            vec![2, 7, 1, 10, 0],
-            vec![9, 5, 5, 3, 9],
-            vec![7, 3, 10, 9, 0],
-            vec![0, 0, 0, 0, 0],
-            vec![6, 6, 1, 0, 0],
-            vec![5, 8, 6, 0, 0],
-            vec![8, 4, 9, 0, 0],
-            vec![10, 10, 8, 6, 1],
-            vec![2, 4, 1, 10, 0],
-            vec![4, 2, 4, 0, 0],
-        ])
+        Game::new_from_vecs(
+            vec![
+                vec![1, 2, 3, 0, 0],
+                vec![5, 5, 3, 3, 4],
+                vec![6, 7, 8, 2, 8],
+                vec![9, 7, 7, 0, 0],
+                vec![2, 7, 1, 10, 0],
+                vec![9, 5, 5, 3, 9],
+                vec![7, 3, 10, 9, 0],
+                vec![0, 0, 0, 0, 0],
+                vec![6, 6, 1, 0, 0],
+                vec![5, 8, 6, 0, 0],
+                vec![8, 4, 9, 0, 0],
+                vec![10, 10, 8, 6, 1],
+                vec![2, 4, 1, 10, 0],
+                vec![4, 2, 4, 0, 0],
+            ],
+            None,
+        )
     }
 
     pub fn stage_9() -> Game {
-        Game::new_from_vecs(vec![
-            vec![1, 2, 3, 0, 0],
-            vec![5, 5, 3, 3, 4],
-            vec![6, 7, 8, 2, 8],
-            vec![9, 7, 7, 0, 0],
-            vec![2, 7, 1, 10, 0],
-            vec![9, 5, 5, 3, 9],
-            vec![7, 3, 10, 9, 0],
-            vec![6, 6, 1, 0, 0],
-            vec![5, 8, 6],
-            vec![8, 4, 9],
-            vec![10, 10, 8, 6, 1],
-            vec![2, 4, 1, 10, 0],
-            vec![4, 2, 4],
-        ])
+        Game::new_from_vecs(
+            vec![
+                vec![1, 2, 3, 0, 0],
+                vec![5, 5, 3, 3, 4],
+                vec![6, 7, 8, 2, 8],
+                vec![9, 7, 7, 0, 0],
+                vec![2, 7, 1, 10, 0],
+                vec![9, 5, 5, 3, 9],
+                vec![7, 3, 10, 9, 0],
+                vec![6, 6, 1, 0, 0],
+                vec![5, 8, 6],
+                vec![8, 4, 9],
+                vec![10, 10, 8, 6, 1],
+                vec![2, 4, 1, 10, 0],
+                vec![4, 2, 4],
+            ],
+            None,
+        )
     }
 }
