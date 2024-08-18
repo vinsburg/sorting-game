@@ -1,0 +1,87 @@
+name: Build and Output Binaries
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: sorting-game-linux-x86-64.tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: sorting-game-windows-x86-64.zip
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: ${{ matrix.target }}
+        override: true
+
+    - name: Build binaries
+      run: cargo build --release --target ${{ matrix.target }}
+
+    - name: Create archive
+      shell: bash
+      run: |
+        cd target/${{ matrix.target }}/release
+        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          tar -czvf ${{ matrix.artifact }} sorting-game
+        else
+          7z a ${{ matrix.artifact }} sorting-game.exe
+        fi
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.artifact }}
+        path: target/${{ matrix.target }}/release/${{ matrix.artifact }}
+
+  release:
+    env:
+      RELEASE_TAG: '' # This will be set in the next job
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: ./artifacts
+
+    - name: Move artifacts to root
+      run: |
+        mv artifacts/*/* ./
+        rm -rf artifacts
+
+    - name: Find artifacts
+      run: find . sorting-game*
+
+    - name: Get current date
+      id: get_date
+      run: echo "RELEASE_TAG=$(date +'%y.%m.%d%H%M%S')" >> $GITHUB_ENV
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.RELEASE_TAG }}
+        name: Release ${{ env.RELEASE_TAG }}
+        files: |
+          sorting-game-linux-x86-64.tar.gz
+          sorting-game-windows-x86-64.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
