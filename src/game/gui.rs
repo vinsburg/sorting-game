@@ -35,14 +35,10 @@ impl Game {
         println!();
     }
 
-    pub fn display_game_end(&self) -> bool {
-        let game_is_over = self.game_is_over();
-        if game_is_over {
-            // TODO: only Print you won when all stages are cleared.
-            println!("All Stacks Sorted! - You Won! 🎉\nPress Enter to continue, or Ctrl+C to exit.");
-            io::stdin().read_line(&mut String::new()).unwrap();
-        }
-        game_is_over
+    pub fn stage_complete_prompt(&self, is_last_stage: bool) {
+        let game_complete_message = if is_last_stage { "You Won! 🎉" } else { "Stage complete! 💪" };
+        println!("All Stacks Sorted! - {}\nPress Enter to continue, or Ctrl+C to exit.", game_complete_message);
+        io::stdin().read_line(&mut String::new()).unwrap();
     }
 
     pub fn read_valid_input(&self) -> (usize, usize) {

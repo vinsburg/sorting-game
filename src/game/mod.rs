@@ -91,7 +91,7 @@ impl Game {
         self.stacks[to].push_immigrants(immigrants);
     }
 
-    fn game_is_over(&self) -> bool {
+    fn stage_complete(&self) -> bool {
         self.kinds_status == (1 << self.units_per_kind.len()) - 1
     }
 
@@ -99,7 +99,7 @@ impl Game {
         loop {
             // TODO: do not increment turn when the game has ended.
             self.render();
-            if self.display_game_end() {
+            if self.stage_complete() {
                 break;
             }
             let (from, to) = self.read_valid_input();
