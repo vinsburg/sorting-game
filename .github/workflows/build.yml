@@ -1,9 +1,14 @@
-name: Build and Output Binaries
+name: Build and Release
 
 on:
   push:
     branches:
-      - main
+      - '**'
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+  pull_request:
+    branches:
+      - '**'
 
 permissions:
   contents: write
@@ -53,8 +58,6 @@ jobs:
         path: target/${{ matrix.target }}/release/${{ matrix.artifact }}
 
   release:
-    env:
-      RELEASE_TAG: '' # This will be set in the next job
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -69,19 +72,15 @@ jobs:
         rm -rf artifacts
 
     - name: Find artifacts
-      run: find . sorting-game*
-
-    - name: Get current date
-      id: get_date
-      run: echo "RELEASE_TAG=$(date +'%y.%m.%d%H%M%S')" >> $GITHUB_ENV
+      run: find . -name "sorting-game*"
 
     - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ env.RELEASE_TAG }}
-        name: Release ${{ env.RELEASE_TAG }}
+        tag_name: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
         files: |
-          sorting-game-linux-x86-64.tar.gz
-          sorting-game-windows-x86-64.zip
+          "sorting-game-*"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
