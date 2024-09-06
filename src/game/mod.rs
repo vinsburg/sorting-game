@@ -95,7 +95,7 @@ impl Game {
         self.kinds_status == (1 << self.units_per_kind.len()) - 1
     }
 
-    pub fn turn_loop(&mut self) {
+    fn turn_loop(&mut self) {
         loop {
             // TODO: do not increment turn when the game has ended.
             self.render();
@@ -104,6 +104,15 @@ impl Game {
             }
             let (from, to) = self.read_valid_input();
             self.make_a_move(from, to);
+        }
+    }
+
+    pub fn play() {
+        let stages = Game::get_stages();
+        let last_stage_index = stages.len() - 1;
+        for (ind, mut stage) in stages.into_iter().enumerate() {
+            stage.turn_loop();
+            stage.stage_complete_prompt(ind == last_stage_index);
         }
     }
 }
