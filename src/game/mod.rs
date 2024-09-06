@@ -65,8 +65,6 @@ impl Game {
     }
 
     fn make_a_move(&mut self, from: usize, to: usize) {
-        self.turn += 1;
-
         let immigrants = &mut Stack {
             size: 0,
             units: Vec::new(),
@@ -89,6 +87,8 @@ impl Game {
             self.kinds_status |= 1 << self.kind_indices[&top_immigrant];
         }
         self.stacks[to].push_immigrants(immigrants);
+
+        self.turn += if self.stage_complete() { 0 } else { 1 };
     }
 
     fn stage_complete(&self) -> bool {
@@ -96,8 +96,8 @@ impl Game {
     }
 
     fn turn_loop(&mut self) {
+        // TODO: Implement stage reset with some key combination.
         loop {
-            // TODO: do not increment turn when the game has ended.
             self.render();
             if self.stage_complete() {
                 break;
