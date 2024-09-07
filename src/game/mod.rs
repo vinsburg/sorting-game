@@ -65,6 +65,7 @@ impl Game {
     }
 
     fn make_a_move(&mut self, from: usize, to: usize) {
+        // TODO: implement forced ilegal moves, for undo support.
         let immigrants = &mut Stack {
             size: 0,
             units: Vec::new(),
@@ -72,12 +73,8 @@ impl Game {
         self.stacks[from].pop_immigrants(immigrants);
 
         let move_is_legal = self.move_is_legal(&immigrants, &self.stacks[to]);
-
-        if move_is_legal {
-            self.stacks[to].push_immigrants(immigrants);
-        } else {
-            self.stacks[from].push_immigrants(immigrants);
-        }
+        let dest: usize = if move_is_legal { to } else { from };
+        self.stacks[dest].push_immigrants(immigrants);
 
         self.stacks[to].pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.clone_top_unit();
