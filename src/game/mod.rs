@@ -64,27 +64,31 @@ impl Game {
         tops_match && there_is_room
     }
 
-    // fn update_status(&mut self, to: usize) {}
-
-    fn make_a_move(&mut self, from: usize, to: usize) {
-        // TODO: implement forced ilegal moves, for undo support.
+    fn update_status(&mut self, stack_ind: usize) {
         let immigrants = &mut Stack::new();
-        self.stacks[from].pop_immigrants(immigrants);
 
-        let move_is_legal = self.move_is_legal(&immigrants, &self.stacks[to]);
-        let dest: usize = if move_is_legal { to } else { from };
-        self.stacks[dest].push_immigrants(immigrants);
-
-        self.stacks[to].pop_immigrants(immigrants);
+        self.stacks[stack_ind].pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.clone_top_unit();
         if !top_immigrant.is_empty()
             && (immigrants.units.len() == self.units_per_kind[&top_immigrant])
         {
             self.kinds_status |= 1 << self.kind_indices[&top_immigrant];
         }
-        self.stacks[to].push_immigrants(immigrants);
+        self.stacks[stack_ind].push_immigrants(immigrants);
 
         self.turn += if self.stage_complete() { 0 } else { 1 };
+    }
+
+    fn make_a_move(&mut self, from: usize, to: usize) {
+        // TODO: implement forced illegal moves, for undo support.
+        let immigrants: &mut Stack = &mut Stack::new();
+        self.stacks[from].pop_immigrants(immigrants);
+
+        let move_is_legal: bool = self.move_is_legal(&immigrants, &self.stacks[to]);
+        let dest: usize = if move_is_legal { to } else { from };
+        self.stacks[dest].push_immigrants(immigrants);
+
+        self.update_status(to);
     }
 
     fn stage_complete(&self) -> bool {
