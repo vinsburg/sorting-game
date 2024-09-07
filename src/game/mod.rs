@@ -64,12 +64,11 @@ impl Game {
         tops_match && there_is_room
     }
 
+    // fn update_status(&mut self, to: usize) {}
+
     fn make_a_move(&mut self, from: usize, to: usize) {
         // TODO: implement forced ilegal moves, for undo support.
-        let immigrants = &mut Stack {
-            size: 0,
-            units: Vec::new(),
-        };
+        let immigrants = &mut Stack::new();
         self.stacks[from].pop_immigrants(immigrants);
 
         let move_is_legal = self.move_is_legal(&immigrants, &self.stacks[to]);

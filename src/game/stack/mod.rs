@@ -8,6 +8,13 @@ pub struct Stack {
 }
 
 impl Stack {
+    pub fn new() -> Stack {
+        Stack {
+            size: 0,
+            units: Vec::new(),
+        }
+    }
+
     pub fn is_vacant(&self) -> bool {
         self.units.len() == 0
     }
