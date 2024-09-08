@@ -102,9 +102,10 @@ jobs:
       if: steps.check-tag.outputs.tag
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref_name }}
-        name: Release ${{ github.ref_name }}
+        tag_name: ${{ steps.check-tag.outputs.tag }}
+        name: Release ${{ steps.check-tag.outputs.tag }}
         files: |
-          "sorting-game-*"
+          sorting-game-linux-x86-64.tar.gz
+          sorting-game-windows-x86-64.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
