@@ -73,6 +73,8 @@ impl Game {
             && (immigrants.units.len() == self.units_per_kind[&top_immigrant])
         {
             self.kinds_status |= 1 << self.kind_indices[&top_immigrant];
+        } else {
+            self.kinds_status &= !(1 << self.kind_indices[&top_immigrant]);
         }
         self.stacks[stack_ind].push_immigrants(immigrants);
 
