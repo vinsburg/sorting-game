@@ -35,6 +35,13 @@ impl Game {
         }
     }
 
+    fn clone(&self) -> Game {
+        Game::new(
+            self.stacks.iter().map(|stack| stack.clone()).collect(),
+            Some(self.stage_name.clone()),
+        )
+    }
+
     fn count_kinds(stacks: &[Stack]) -> HashMap<Kind, usize> {
         let mut units_per_kind: HashMap<Kind, usize> = HashMap::new(); // Initialize the HashMap
         for stack in stacks {
@@ -99,6 +106,15 @@ impl Game {
 
     fn turn_loop(&mut self) {
         // TODO: Implement stage reset with some key combination.
+        let _stage_backup: Game = self.clone();
+        loop {
+            self.render();
+            if self.stage_complete() {
+                break;
+            }
+            let (from, to) = self.read_valid_input();
+            self.make_a_move(from, to);
+        }
         loop {
             self.render();
             if self.stage_complete() {

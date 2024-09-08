@@ -15,6 +15,13 @@ impl Stack {
         }
     }
 
+    pub fn clone(&self) -> Stack {
+        Stack {
+            size: self.size,
+            units: self.units.iter().map(|unit| unit.clone()).collect(),
+        }
+    }
+
     pub fn is_vacant(&self) -> bool {
         self.units.len() == 0
     }
