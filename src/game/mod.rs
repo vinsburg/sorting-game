@@ -106,21 +106,17 @@ impl Game {
 
     fn turn_loop(&mut self) {
         // TODO: Implement stage reset with some key combination.
-        let _stage_backup: Game = self.clone();
+        let stage_backup: Game = self.clone();
         loop {
             self.render();
             if self.stage_complete() {
                 break;
             }
             let (from, to) = self.read_valid_input();
-            self.make_a_move(from, to);
-        }
-        loop {
-            self.render();
-            if self.stage_complete() {
-                break;
+            if (from == 0) && (to == 0) {
+                *self = stage_backup.clone();
+                continue;
             }
-            let (from, to) = self.read_valid_input();
             self.make_a_move(from, to);
         }
     }

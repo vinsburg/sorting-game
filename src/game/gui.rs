@@ -43,11 +43,17 @@ impl Game {
 
     pub fn read_valid_input(&self) -> (usize, usize) {
         let mut input = String::new();
+        let mut from: usize = 0;
+        let mut to: usize = 0;
         loop {
-            print!("Select stacks to move from and to (e.g., '2 3'): ");
+            print!("Select stacks to move from and to (e.g., '2 3'). Type 'r' to reset the stage:");
             io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
             input.clear();
             io::stdin().read_line(&mut input).unwrap();
+
+            if input.trim() == "r" {
+                break;
+            }
 
             let parts: Vec<&str> = input.trim().split_whitespace().collect();
             if parts.len() != 2 {
@@ -55,7 +61,7 @@ impl Game {
                 continue;
             }
 
-            let from = match parts[0].parse::<usize>() {
+            from = match parts[0].parse::<usize>() {
                 Ok(num) if num - 1 < self.stacks.len() => num - 1,
                 _ => {
                     println!(
@@ -66,7 +72,7 @@ impl Game {
                 }
             };
 
-            let to = match parts[1].parse::<usize>() {
+            to = match parts[1].parse::<usize>() {
                 Ok(num) if ((num - 1 < self.stacks.len()) && (num - 1 != from)) => num - 1,
                 _ => {
                     println!(
@@ -77,8 +83,9 @@ impl Game {
                 }
             };
 
-            return (from, to);
+            break;
         }
+        return (from, to);
     }
 }
 
