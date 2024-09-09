@@ -1,9 +1,3 @@
-/*
-The sorting game is comprised of stacks of varying sizes, and several "kinds", each with multiple units, scattered across the stacks.
-You may move units from stack s0 to stack s1 if the top stack units are of the same kind k0, and there is room on s1 for all k0 units from s0.
-The goal is for all stacks to be either empty, or contain all units of a single kind.
-*/
-
 mod entry;
 mod gui;
 mod stack;
