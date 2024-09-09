@@ -113,7 +113,7 @@ impl Game {
                 break;
             }
             let (from, to) = self.read_valid_input();
-            if (from == 0) && (to == 0) {
+            if (from, to) == (0, 0) {
                 *self = stage_backup.clone();
                 continue;
             }
