@@ -6,10 +6,10 @@ impl Game {
     fn vecs_to_stacks(vecs: Vec<Vec<usize>>) -> Vec<Stack> {
         let mut stacks: Vec<Stack> = Vec::new();
         for vec in vecs {
-            let vec_len = vec.len();
+            let vec_len: usize = vec.len();
             let mut units: Vec<Kind> = Vec::new();
             for unit_id in vec {
-                let kind = Kind::new(unit_id);
+                let kind: Kind = Kind::new(unit_id);
                 if !kind.is_empty() {
                     units.push(kind);
                 }
@@ -27,7 +27,7 @@ impl Game {
     }
 
     pub fn get_stages() -> Vec<Game> {
-        let stage_vec = vec![
+        let stage_vec: Vec<Vec<Vec<usize>>> = vec![
             vec![vec![2, 1, 0], vec![1, 2, 0], vec![2, 0]],
             vec![
                 vec![1, 2, 3, 0, 0],
@@ -63,7 +63,7 @@ impl Game {
         ];
         let mut stages: Vec<Game> = Vec::new();
         for (ind, vec_stacks) in stage_vec.iter().enumerate() {
-            let name = format!("Stage - {}", ind+1);
+            let name: String = format!("Stage - {}", ind+1);
             stages.push(Game::new_from_vecs(vec_stacks.clone(), Some(name)));
         }
         stages

@@ -14,8 +14,8 @@ impl Game {
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut buffer: String = "".to_string();
             for unit in &stack.units {
-                let unit_index = self.kind_indices[unit];
-                let color = COLORS[unit_index % COLORS.len()].clone();
+                let unit_index: usize = self.kind_indices[unit];
+                let color: [u8; 3] = COLORS[unit_index % COLORS.len()].clone();
                 buffer.push_str(
                     format!(
                         "\x1b[38;2;{};{};{}m{:>2}\x1b[0m ",
@@ -36,13 +36,13 @@ impl Game {
     }
 
     pub fn stage_complete_prompt(&self, is_last_stage: bool) {
-        let game_complete_message = if is_last_stage { "You Won! 🎉" } else { "Stage complete! 💪" };
+        let game_complete_message: &str = if is_last_stage { "You Won! 🎉" } else { "Stage complete! 💪" };
         println!("All Stacks Sorted! - {}\nPress Enter to continue, or Ctrl+C to exit.", game_complete_message);
         io::stdin().read_line(&mut String::new()).unwrap();
     }
 
     pub fn read_valid_input(&self) -> (usize, usize) {
-        let mut input = String::new();
+        let mut input: String = String::new();
         let mut from: usize = 0;
         let mut to: usize = 0;
         loop {

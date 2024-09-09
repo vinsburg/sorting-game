@@ -39,7 +39,7 @@ impl Stack {
     }
 
     pub fn pop_immigrants(&mut self, immigrants: &mut Stack) {
-        let top_immigrant = self.clone_top_unit();
+        let top_immigrant: Kind = self.clone_top_unit();
         while !self.is_vacant() && self.clone_top_unit() == top_immigrant {
             self.units.pop();
             immigrants.units.push(top_immigrant.clone());
@@ -48,7 +48,7 @@ impl Stack {
 
     pub fn push_immigrants(&mut self, immigrants: &mut Stack) {
         while immigrants.units.len() != 0 {
-            let immigrant = immigrants.units.pop().unwrap();
+            let immigrant: Kind = immigrants.units.pop().unwrap();
             self.units.push(immigrant);
         }
     }

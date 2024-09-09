@@ -23,8 +23,8 @@ pub struct Game {
 
 impl Game {
     fn new(stacks: Vec<Stack>, stage_name: Option<String>) -> Game {
-        let units_per_kind = Game::count_kinds(&stacks);
-        let kind_indices = Game::index_kinds(&units_per_kind);
+        let units_per_kind: HashMap<Kind, usize> = Game::count_kinds(&stacks);
+        let kind_indices: HashMap<Kind, usize> = Game::index_kinds(&units_per_kind);
         Game {
             stacks,
             units_per_kind,
@@ -63,16 +63,16 @@ impl Game {
     }
 
     fn move_is_legal(&self, immigrants: &Stack, residents: &Stack) -> bool {
-        let top_immigrant = immigrants.clone_top_unit();
-        let top_resident = residents.clone_top_unit();
-        let tops_match =
+        let top_immigrant: Kind = immigrants.clone_top_unit();
+        let top_resident: Kind = residents.clone_top_unit();
+        let tops_match: bool =
             (top_immigrant == top_resident) || top_immigrant.is_empty() || top_resident.is_empty();
-        let there_is_room = immigrants.units.len() <= residents.get_vacancy();
+        let there_is_room: bool = immigrants.units.len() <= residents.get_vacancy();
         tops_match && there_is_room
     }
 
     fn update_status(&mut self, stack_ind: usize) {
-        let immigrants = &mut Stack::new();
+        let immigrants: &mut Stack = &mut Stack::new();
 
         self.stacks[stack_ind].pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.clone_top_unit();
@@ -105,7 +105,6 @@ impl Game {
     }
 
     fn turn_loop(&mut self) {
-        // TODO: Implement stage reset with some key combination.
         let stage_backup: Game = self.clone();
         loop {
             self.render();
@@ -122,8 +121,8 @@ impl Game {
     }
 
     pub fn play() {
-        let stages = Game::get_stages();
-        let last_stage_index = stages.len() - 1;
+        let stages: Vec<Game> = Game::get_stages();
+        let last_stage_index: usize = stages.len() - 1;
         for (ind, mut stage) in stages.into_iter().enumerate() {
             stage.turn_loop();
             stage.stage_complete_prompt(ind == last_stage_index);
