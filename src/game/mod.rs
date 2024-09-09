@@ -4,10 +4,12 @@ You may move units from stack s0 to stack s1 if the top stack units are of the s
 The goal is for all stacks to be either empty, or contain all units of a single kind.
 */
 
+mod entry;
 mod gui;
 mod stack;
 mod stages;
 
+use entry::Entry;
 use stack::kind::Kind;
 use stack::Stack;
 use std::collections::HashMap;
@@ -19,6 +21,7 @@ pub struct Game {
     kinds_status: usize,
     turn: usize,
     stage_name: String,
+    ledger: Vec<Entry>,
 }
 
 impl Game {
@@ -32,6 +35,7 @@ impl Game {
             kinds_status: 0,
             turn: 1,
             stage_name: stage_name.unwrap_or("".to_string()),
+            ledger: Vec::new(),
         }
     }
 
@@ -71,7 +75,7 @@ impl Game {
         tops_match && there_is_room
     }
 
-    fn update_status(&mut self, stack_ind: usize) {
+    fn update_kind_status(&mut self, stack_ind: usize) {
         let immigrants: &mut Stack = &mut Stack::new();
 
         self.stacks[stack_ind].pop_immigrants(immigrants);
@@ -84,7 +88,17 @@ impl Game {
             self.kinds_status &= !(1 << self.kind_indices[&top_immigrant]);
         }
         self.stacks[stack_ind].push_immigrants(immigrants);
+    }
 
+    fn update_state(&mut self, from: usize, to: usize, kind: Kind, quantity: usize) {
+        self.ledger.push(Entry {
+            _from: from,
+            _to: to,
+            _kind: kind,
+            _quantity: quantity,
+        });
+        // self.update_kind_status(from);  // TODO: see why this panics.
+        self.update_kind_status(to);
         self.turn += if self.stage_complete() { 0 } else { 1 };
     }
 
@@ -92,12 +106,16 @@ impl Game {
         // TODO: implement forced illegal moves, for undo support.
         let immigrants: &mut Stack = &mut Stack::new();
         self.stacks[from].pop_immigrants(immigrants);
+        let kind: Kind = immigrants.clone_top_unit();
+        let quantity: usize = immigrants.units.len();
 
         let move_is_legal: bool = self.move_is_legal(&immigrants, &self.stacks[to]);
         let dest: usize = if move_is_legal { to } else { from };
         self.stacks[dest].push_immigrants(immigrants);
 
-        self.update_status(to);
+        if move_is_legal {
+            self.update_state(from, to, kind, quantity);
+        }
     }
 
     fn stage_complete(&self) -> bool {
