@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -26,6 +26,12 @@ jobs:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             artifact: sorting-game-windows-x86-64.zip
+          - os: macos-13
+            target: x86_64-apple-darwin
+            artifact: sorting-game-macos-x86-64.tar.gz
+          - os: macos-14
+            target: aarch64-apple-darwin
+            artifact: sorting-game-macos-arm64.tar.gz
 
     steps:
     - name: Checkout code
@@ -45,10 +51,10 @@ jobs:
       shell: bash
       run: |
         cd target/${{ matrix.target }}/release
-        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          tar -czvf ${{ matrix.artifact }} sorting-game
-        else
+        if [[ "${{ matrix.os }}" == windows-latest ]]; then
           7z a ${{ matrix.artifact }} sorting-game.exe
+        else
+          tar -czvf ${{ matrix.artifact }} sorting-game
         fi
 
     - name: Upload artifact
@@ -107,5 +113,7 @@ jobs:
         files: |
           sorting-game-linux-x86-64.tar.gz
           sorting-game-windows-x86-64.zip
+          sorting-game-macos-x86-64.tar.gz
+          sorting-game-macos-arm64.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
