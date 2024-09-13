@@ -96,12 +96,12 @@ impl Game {
         self.turn += if self.stage_complete() { 0 } else { 1 };
     }
 
-    fn move_units(&mut self, from: usize, to: usize, force: bool) {
+    fn move_units(&mut self, from: usize, to: usize, quantity: Option<usize>) {
         let immigrants: &mut Stack = &mut Stack::new();
+        let force: bool = quantity.is_some();
         self.stacks[from].pop_immigrants(immigrants);
         let kind: Kind = immigrants.clone_top_unit();
         let quantity: usize = immigrants.units.len();
-
         let move_is_legal: bool = force || self.move_is_legal(&immigrants, &self.stacks[to]);
         let dest: usize = if move_is_legal { to } else { from };
         self.stacks[dest].push_immigrants(immigrants);
@@ -112,11 +112,11 @@ impl Game {
     }
 
     fn move_legally(&mut self, from: usize, to: usize) {
-        self.move_units(from, to, false);
+        self.move_units(from, to, None);
     }
 
-    fn _move_forcefully(&mut self, from: usize, to: usize) {
-        self.move_units(from, to, true);
+    fn _move_forcefully(&mut self, from: usize, to: usize, quantity: usize) {
+        self.move_units(from, to, Some(quantity));
     }
 
     fn stage_complete(&self) -> bool {
@@ -136,6 +136,8 @@ impl Game {
                 gui::MenuOption::Move => {
                     let (from, to) = user_input.stack_move.unwrap();
                     self.move_legally(from, to);
+                // gui::MenuOption::Undo => let (from, to, quantity) = self.undo_move();
+                // self._move_forcefully(from, to, quantity);
                 },
                 _ =>  {} // TODO: implement Help, Undo and Quit cases.
             }

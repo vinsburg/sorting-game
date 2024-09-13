@@ -38,7 +38,7 @@ impl Stack {
         }
     }
 
-    pub fn pop_immigrants(&mut self, immigrants: &mut Stack) {
+    pub fn pop_immigrants(&mut self, immigrants: &mut Stack) {  // TODO: implement pop_units with quantity spec
         let top_immigrant: Kind = self.clone_top_unit();
         while !self.is_vacant() && self.clone_top_unit() == top_immigrant {
             self.units.pop();
