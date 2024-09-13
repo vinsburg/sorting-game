@@ -60,7 +60,7 @@ impl Game {
         kind_indices
     }
 
-    fn is_move_legal(&mut self, from: usize, to: usize) -> bool {
+    fn move_is_illegal(&self, from: usize, to: usize) -> bool {
         let source_residents: &mut Stack = &mut self.stacks[from].clone();
         let target_residents: &Stack = &self.stacks[to];
         let immigrants: &mut Stack = &mut Stack::new();
@@ -69,8 +69,8 @@ impl Game {
         let top_resident: Kind = target_residents.clone_top_unit();
         let tops_match: bool =
             (top_immigrant == top_resident) || top_immigrant.is_empty() || top_resident.is_empty();
-        let there_is_room: bool = immigrants.units.len() <= target_residents.get_vacancy();
-        tops_match && there_is_room
+        let there_is_no_room: bool = immigrants.units.len() > target_residents.get_vacancy();
+        there_is_no_room || !tops_match
     }
 
     fn update_kind_status(&mut self, stack_ind: usize) {
@@ -104,21 +104,17 @@ impl Game {
     }
 
     fn move_units(&mut self, from: usize, to: usize, limit_: Option<usize>) {
-        let move_approved: bool = limit_.is_some() || self.is_move_legal(from, to); // TODO: illegal moves should prompt users for new input.
         let immigrants: &mut Stack = &mut Stack::new();
         self.stacks[from].pop_immigrants_with_limit(immigrants, limit_);
         let kind: Kind = immigrants.clone_top_unit();
         let quantity: usize = immigrants.units.len();
-        let dest: usize = if move_approved { to } else { from };
-        self.stacks[dest].push_immigrants(immigrants);
+        self.stacks[to].push_immigrants(immigrants);
 
-        if move_approved {
-            self.update_state(from, to);
-            match limit_ {
-                Some(_) => {} // When a limit is specified this is an undo move, it should not be ledged.
-                _ => self.ledge(from, to, kind, quantity),
-            };
-        }
+        self.update_state(from, to);
+        match limit_ {
+            Some(_) => {} // Limits are specified in undo moves, Undo moves should not be ledged.
+            _ => self.ledge(from, to, kind, quantity),
+        };
     }
 
     fn move_legally(&mut self, from: usize, to: usize) {

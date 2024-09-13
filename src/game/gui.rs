@@ -11,7 +11,16 @@ pub enum MenuOption {
 
 pub struct UserInput {
     pub menu_option: MenuOption,
-    pub stack_move: Option<(usize, usize,)>
+    pub stack_move: Option<(usize, usize)>,
+}
+
+impl UserInput {
+    pub fn new_menu_option(menu_option: MenuOption) -> UserInput {
+        UserInput {
+            menu_option: menu_option,
+            stack_move: None,
+        }
+    }
 }
 
 impl Game {
@@ -49,8 +58,14 @@ impl Game {
     }
 
     pub fn stage_complete_prompt(&self, is_last_stage: bool) {
-        let game_complete_message: &str = if is_last_stage { "You Won! 🎉" } else { "Stage complete! 💪" };
-        println!("All Stacks Sorted! - {}\nPress Enter to continue, or Ctrl+C to exit.", game_complete_message);
+        let game_complete_message: &str = match is_last_stage {
+            true => "You Won! 🎉",
+            false => "Stage complete! 💪",
+        };
+        println!(
+            "All Stacks Sorted! - {}\nPress Enter to continue, or Ctrl+C to exit.",
+            game_complete_message
+        );
         io::stdin().read_line(&mut String::new()).unwrap();
     }
 
@@ -62,20 +77,20 @@ impl Game {
             io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
             input.clear();
             io::stdin().read_line(&mut input).unwrap();
-            let str_input : &str = input.trim();
+            let str_input: &str = input.trim();
 
-            match str_input {
-                "h" => user_input = UserInput { menu_option: MenuOption::Help, stack_move: None },
-                "r" => user_input = UserInput { menu_option: MenuOption::Reset, stack_move: None },
-                "u" => user_input = UserInput { menu_option: MenuOption::Undo, stack_move: None },
-                "q" => user_input = UserInput { menu_option: MenuOption::Quit, stack_move: None },
+            user_input = match str_input {
+                "h" => UserInput::new_menu_option(MenuOption::Help),
+                "r" => UserInput::new_menu_option(MenuOption::Reset),
+                "u" => UserInput::new_menu_option(MenuOption::Undo),
+                "q" => UserInput::new_menu_option(MenuOption::Quit),
                 _ => {
                     let parts: Vec<&str> = input.trim().split_whitespace().collect();
                     if parts.len() != 2 {
                         println!("Please enter two numbers separated by a space.");
                         continue;
                     }
-        
+
                     let from = match parts[0].parse::<usize>() {
                         Ok(num) if num - 1 < self.stacks.len() => num - 1,
                         _ => {
@@ -86,7 +101,7 @@ impl Game {
                             continue;
                         }
                     };
-        
+
                     let to = match parts[1].parse::<usize>() {
                         Ok(num) if ((num - 1 < self.stacks.len()) && (num - 1 != from)) => num - 1,
                         _ => {
@@ -98,9 +113,23 @@ impl Game {
                         }
                     };
 
-                    user_input = UserInput { menu_option: MenuOption::Move, stack_move: Some((from, to))};
+                    if self.move_is_illegal(from, to) {
+                        println!(
+                            "Illegal move from {} to {}.
+                        a) Target stack must have room for the top units from the source stack. 
+                        b) Top units in the target stack must have the same kind as in the source.",
+                            from + 1,
+                            to + 1
+                        );
+                        continue;
+                    }
+
+                    UserInput {
+                        menu_option: MenuOption::Move,
+                        stack_move: Some((from, to)),
+                    }
                 }
-            }
+            };
             break;
         }
         return user_input;
