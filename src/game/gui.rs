@@ -1,6 +1,19 @@
 use crate::game::Game;
 use std::io::{self, Write};
 
+pub enum MenuOption {
+    Help,
+    Move,
+    Reset,
+    Undo,
+    Quit,
+}
+
+pub struct UserInput {
+    pub menu_option: MenuOption,
+    pub stack_move: Option<(usize, usize,)>
+}
+
 impl Game {
     pub fn render(&self) {
         // Clear the screen and move the cursor to the top-left corner
@@ -41,51 +54,56 @@ impl Game {
         io::stdin().read_line(&mut String::new()).unwrap();
     }
 
-    pub fn read_valid_input(&self) -> (usize, usize) {
+    pub fn read_valid_input(&self) -> UserInput {
+        let user_input: UserInput;
         let mut input: String = String::new();
-        let mut from: usize = 0;
-        let mut to: usize = 0;
         loop {
             print!("Select stacks to move from and to (e.g., '2 3'). Type 'r' to reset the stage:");
             io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
             input.clear();
             io::stdin().read_line(&mut input).unwrap();
+            let str_input : &str = input.trim();
 
-            if input.trim() == "r" {
-                break;
-            }
-
-            let parts: Vec<&str> = input.trim().split_whitespace().collect();
-            if parts.len() != 2 {
-                println!("Please enter two numbers separated by a space.");
-                continue;
-            }
-
-            from = match parts[0].parse::<usize>() {
-                Ok(num) if num - 1 < self.stacks.len() => num - 1,
+            match str_input {
+                "h" => user_input = UserInput { menu_option: MenuOption::Help, stack_move: None },
+                "r" => user_input = UserInput { menu_option: MenuOption::Reset, stack_move: None },
+                "u" => user_input = UserInput { menu_option: MenuOption::Undo, stack_move: None },
+                "q" => user_input = UserInput { menu_option: MenuOption::Quit, stack_move: None },
                 _ => {
-                    println!(
-                        "Invalid input for 'from' stack. Enter a number between 0 and {}.",
-                        self.stacks.len() - 1
-                    );
-                    continue;
-                }
-            };
+                    let parts: Vec<&str> = input.trim().split_whitespace().collect();
+                    if parts.len() != 2 {
+                        println!("Please enter two numbers separated by a space.");
+                        continue;
+                    }
+        
+                    let from = match parts[0].parse::<usize>() {
+                        Ok(num) if num - 1 < self.stacks.len() => num - 1,
+                        _ => {
+                            println!(
+                                "Invalid input for 'from' stack. Enter a number between 0 and {}.",
+                                self.stacks.len() - 1
+                            );
+                            continue;
+                        }
+                    };
+        
+                    let to = match parts[1].parse::<usize>() {
+                        Ok(num) if ((num - 1 < self.stacks.len()) && (num - 1 != from)) => num - 1,
+                        _ => {
+                            println!(
+                                "Invalid input for 'to' stack. Enter another number between 0 and {}.",
+                                self.stacks.len() - 1
+                            );
+                            continue;
+                        }
+                    };
 
-            to = match parts[1].parse::<usize>() {
-                Ok(num) if ((num - 1 < self.stacks.len()) && (num - 1 != from)) => num - 1,
-                _ => {
-                    println!(
-                        "Invalid input for 'to' stack. Enter another number between 0 and {}.",
-                        self.stacks.len() - 1
-                    );
-                    continue;
+                    user_input = UserInput { menu_option: MenuOption::Move, stack_move: Some((from, to))};
                 }
-            };
-
+            }
             break;
         }
-        return (from, to);
+        return user_input;
     }
 }
 

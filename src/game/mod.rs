@@ -130,10 +130,14 @@ impl Game {
             if self.stage_complete() {
                 break;
             }
-            let (from, to) = self.read_valid_input();
-            match (from, to) {
-                (0, 0) => *self = stage_backup.clone(),
-                _ => self.move_legally(from, to),
+            let user_input: gui::UserInput = self.read_valid_input();
+            match user_input.menu_option {
+                gui::MenuOption::Reset => *self = stage_backup.clone(),
+                gui::MenuOption::Move => {
+                    let (from, to) = user_input.stack_move.unwrap();
+                    self.move_legally(from, to);
+                },
+                _ =>  {} // TODO: implement Help, Undo and Quit cases.
             }
         }
     }
