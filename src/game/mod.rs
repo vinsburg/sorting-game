@@ -60,7 +60,7 @@ impl Game {
         kind_indices
     }
 
-    fn move_is_illegal(&self, from: usize, to: usize) -> bool {
+    fn move_is_illegal(&self, from: usize, to: usize) -> bool {  // TODO: split in two and prompt users accordingly.
         let source_residents: &mut Stack = &mut self.stacks[from].clone();
         let target_residents: &Stack = &self.stacks[to];
         let immigrants: &mut Stack = &mut Stack::new();
@@ -75,17 +75,17 @@ impl Game {
 
     fn update_kind_status(&mut self, stack_ind: usize) {
         let immigrants: &mut Stack = &mut Stack::new();
-
-        self.stacks[stack_ind].pop_immigrants(immigrants);
+        self.stacks[stack_ind].clone().pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.clone_top_unit();
-        if !top_immigrant.is_empty() {
-            let kind_status_operand: usize = 1 << self.kind_indices[&top_immigrant];
-            self.kinds_status |= kind_status_operand; // Initially set the kth bit to 1.
-            if immigrants.units.len() != self.units_per_kind[&top_immigrant] {
-                self.kinds_status -= kind_status_operand; // zero the kth bit.
-            }
+        if top_immigrant.is_empty() {
+            return;
         }
-        self.stacks[stack_ind].push_immigrants(immigrants);
+
+        let kind_status_operand: usize = 1 << self.kind_indices[&top_immigrant];
+        self.kinds_status |= kind_status_operand; // Initially set the kth bit to 1.
+        if immigrants.units.len() != self.units_per_kind[&top_immigrant] {
+            self.kinds_status -= kind_status_operand; // zero the kth bit.
+        }
     }
 
     fn ledge(&mut self, from: usize, to: usize, kind: Kind, quantity: usize) {
