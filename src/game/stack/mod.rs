@@ -38,12 +38,24 @@ impl Stack {
         }
     }
 
-    pub fn pop_immigrants(&mut self, immigrants: &mut Stack) {  // TODO: implement pop_units with quantity spec
+    pub fn pop_immigrants_with_limit(&mut self, immigrants: &mut Stack, limit_: Option<usize>) {
         let top_immigrant: Kind = self.clone_top_unit();
-        while !self.is_vacant() && self.clone_top_unit() == top_immigrant {
+        let mut next_immigrant_is_legal: bool = true;
+        let mut counter: usize = match limit_ {
+            Some(q) => q,
+            None => self.units.len(),
+        };
+
+        while !self.is_vacant() && (counter > 0) && next_immigrant_is_legal {
             self.units.pop();
             immigrants.units.push(top_immigrant.clone());
+            counter -= 1;
+            next_immigrant_is_legal = self.clone_top_unit() == top_immigrant;
         }
+    }
+
+    pub fn pop_immigrants(&mut self, immigrants: &mut Stack) {
+        self.pop_immigrants_with_limit(immigrants, None);
     }
 
     pub fn push_immigrants(&mut self, immigrants: &mut Stack) {

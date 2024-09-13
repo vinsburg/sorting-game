@@ -96,17 +96,16 @@ impl Game {
         self.turn += if self.stage_complete() { 0 } else { 1 };
     }
 
-    fn move_units(&mut self, from: usize, to: usize, quantity: Option<usize>) {
+    fn move_units(&mut self, from: usize, to: usize, limit_: Option<usize>) {
         let immigrants: &mut Stack = &mut Stack::new();
-        let force: bool = quantity.is_some();
         self.stacks[from].pop_immigrants(immigrants);
         let kind: Kind = immigrants.clone_top_unit();
         let quantity: usize = immigrants.units.len();
-        let move_is_legal: bool = force || self.move_is_legal(&immigrants, &self.stacks[to]);
-        let dest: usize = if move_is_legal { to } else { from };
+        let move_approved: bool = limit_.is_some() || self.move_is_legal(&immigrants, &self.stacks[to]);
+        let dest: usize = if move_approved { to } else { from };
         self.stacks[dest].push_immigrants(immigrants);
 
-        if move_is_legal {
+        if move_approved {
             self.update_state(from, to, kind, quantity);
         }
     }
