@@ -137,14 +137,12 @@ impl Game {
 
     fn undo_move(&mut self) {
         match self.ledger.last() {
-            Some(last_entry) => {
-                let from: usize = last_entry.to;
-                let to: usize = last_entry.from;
-                let quantity: usize = last_entry.quantity;
+            Some(entry) => {
+                let (from, to, quantity) = (entry.to, entry.from, entry.quantity);
                 self.ledger.pop();
                 self.move_forcefully(from, to, quantity);
             }
-            _ => {}
+            _ => {}  // No moves to undo.
         }
     }
 
