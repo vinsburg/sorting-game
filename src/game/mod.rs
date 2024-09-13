@@ -133,9 +133,9 @@ impl Game {
             let (from, to) = self.read_valid_input();
             if (from, to) == (0, 0) {
                 *self = stage_backup.clone();
-                continue;
+            } else {
+                self.move_legally(from, to);
             }
-            self.move_legally(from, to);
         }
     }
 
