@@ -74,12 +74,12 @@ impl Game {
 
         self.stacks[stack_ind].pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.clone_top_unit();
-        if !top_immigrant.is_empty()
-            && (immigrants.units.len() == self.units_per_kind[&top_immigrant])
-        {
-            self.kinds_status |= 1 << self.kind_indices[&top_immigrant];
-        } else {
-            self.kinds_status &= !(1 << self.kind_indices[&top_immigrant]);
+        if !top_immigrant.is_empty() {
+            if immigrants.units.len() == self.units_per_kind[&top_immigrant] {
+                self.kinds_status |= 1 << self.kind_indices[&top_immigrant];
+             } else {
+                self.kinds_status &= !(1 << self.kind_indices[&top_immigrant]);
+            }
         }
         self.stacks[stack_ind].push_immigrants(immigrants);
     }
@@ -91,7 +91,7 @@ impl Game {
             _kind: kind,
             _quantity: quantity,
         });
-        // self.update_kind_status(from);  // TODO: see why this panics.
+        self.update_kind_status(from);
         self.update_kind_status(to);
         self.turn += if self.stage_complete() { 0 } else { 1 };
     }
