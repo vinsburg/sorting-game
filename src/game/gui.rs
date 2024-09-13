@@ -58,7 +58,7 @@ impl Game {
         let user_input: UserInput;
         let mut input: String = String::new();
         loop {
-            print!("Select stacks to move from and to (e.g., '2 3'). Type 'r' to reset the stage:");
+            print!("Select stacks to move from and to (e.g., '2 3'). Type 'u' to undo or 'r' to reset the stage: ");
             io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
             input.clear();
             io::stdin().read_line(&mut input).unwrap();

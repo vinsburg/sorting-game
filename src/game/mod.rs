@@ -75,22 +75,25 @@ impl Game {
         self.stacks[stack_ind].pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.clone_top_unit();
         if !top_immigrant.is_empty() {
-            if immigrants.units.len() == self.units_per_kind[&top_immigrant] {
-                self.kinds_status |= 1 << self.kind_indices[&top_immigrant];
-            } else {
-                self.kinds_status &= !(1 << self.kind_indices[&top_immigrant]);
+            let kind_status_operand: usize = 1 << self.kind_indices[&top_immigrant];
+            self.kinds_status |= kind_status_operand; // Initially set the kth bit to 1.
+            if immigrants.units.len() != self.units_per_kind[&top_immigrant] {
+                self.kinds_status -= kind_status_operand;  // zero the kth bit.
             }
         }
         self.stacks[stack_ind].push_immigrants(immigrants);
     }
 
-    fn update_state(&mut self, from: usize, to: usize, kind: Kind, quantity: usize) {
+    fn ledge(&mut self, from: usize, to: usize, kind: Kind, quantity: usize) {
         self.ledger.push(Entry {
-            _from: from,
-            _to: to,
+            from,
+            to,
             _kind: kind,
-            _quantity: quantity,
+            quantity,
         });
+    }
+
+    fn update_state(&mut self, from: usize, to: usize) {
         self.update_kind_status(from);
         self.update_kind_status(to);
         self.turn += if self.stage_complete() { 0 } else { 1 };
@@ -98,15 +101,25 @@ impl Game {
 
     fn move_units(&mut self, from: usize, to: usize, limit_: Option<usize>) {
         let immigrants: &mut Stack = &mut Stack::new();
-        self.stacks[from].pop_immigrants(immigrants);
-        let kind: Kind = immigrants.clone_top_unit();
+        self.stacks[from].pop_immigrants_with_limit(immigrants, limit_);
+        let kind: Kind =  immigrants.clone_top_unit();
         let quantity: usize = immigrants.units.len();
-        let move_approved: bool = limit_.is_some() || self.move_is_legal(&immigrants, &self.stacks[to]);
+        let move_approved: bool =
+            limit_.is_some() || self.move_is_legal(&immigrants, &self.stacks[to]); // TODO: illegal moves should prompt users for new input.
         let dest: usize = if move_approved { to } else { from };
         self.stacks[dest].push_immigrants(immigrants);
-
+        
         if move_approved {
-            self.update_state(from, to, kind, quantity);
+            self.update_state(from, to);
+            match limit_ {
+                Some(_) => {} // When a limit is specified this is an undo move, it should not be ledged.
+                _ => self.ledge(
+                    from,
+                    to,
+                    kind,
+                    quantity,
+                ),
+            };
         }
     }
 
@@ -114,12 +127,25 @@ impl Game {
         self.move_units(from, to, None);
     }
 
-    fn _move_forcefully(&mut self, from: usize, to: usize, quantity: usize) {
+    fn move_forcefully(&mut self, from: usize, to: usize, quantity: usize) {
         self.move_units(from, to, Some(quantity));
     }
 
     fn stage_complete(&self) -> bool {
         self.kinds_status == (1 << self.units_per_kind.len()) - 1
+    }
+
+    fn undo_move(&mut self) {
+        match self.ledger.last() {
+            Some(last_entry) => {
+                let from: usize = last_entry.to;
+                let to: usize = last_entry.from;
+                let quantity: usize = last_entry.quantity;
+                self.ledger.pop();
+                self.move_forcefully(from, to, quantity);
+            }
+            _ => {}
+        }
     }
 
     fn turn_loop(&mut self) {
@@ -130,15 +156,13 @@ impl Game {
                 break;
             }
             let user_input: gui::UserInput = self.read_valid_input();
-            match user_input.menu_option {
-                gui::MenuOption::Reset => *self = stage_backup.clone(),
-                gui::MenuOption::Move => {
-                    let (from, to) = user_input.stack_move.unwrap();
-                    self.move_legally(from, to);
-                // gui::MenuOption::Undo => let (from, to, quantity) = self.undo_move();
-                // self._move_forcefully(from, to, quantity);
+            match user_input.stack_move {
+                Some((from, to)) => self.move_legally(from, to),
+                _ => match user_input.menu_option {
+                    gui::MenuOption::Reset => *self = stage_backup.clone(),
+                    gui::MenuOption::Undo => self.undo_move(),
+                    _ => {} // TODO: implement Help and Quit cases.
                 },
-                _ =>  {} // TODO: implement Help, Undo and Quit cases.
             }
         }
     }
