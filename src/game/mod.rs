@@ -60,12 +60,16 @@ impl Game {
         kind_indices
     }
 
-    fn move_is_legal(&self, immigrants: &Stack, residents: &Stack) -> bool {
+    fn is_move_legal(&mut self, from: usize, to: usize) -> bool {
+        let source_residents: &mut Stack = &mut self.stacks[from].clone();
+        let target_residents: &Stack = &self.stacks[to];
+        let immigrants: &mut Stack = &mut Stack::new();
+        source_residents.pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.clone_top_unit();
-        let top_resident: Kind = residents.clone_top_unit();
+        let top_resident: Kind = target_residents.clone_top_unit();
         let tops_match: bool =
             (top_immigrant == top_resident) || top_immigrant.is_empty() || top_resident.is_empty();
-        let there_is_room: bool = immigrants.units.len() <= residents.get_vacancy();
+        let there_is_room: bool = immigrants.units.len() <= target_residents.get_vacancy();
         tops_match && there_is_room
     }
 
@@ -78,7 +82,7 @@ impl Game {
             let kind_status_operand: usize = 1 << self.kind_indices[&top_immigrant];
             self.kinds_status |= kind_status_operand; // Initially set the kth bit to 1.
             if immigrants.units.len() != self.units_per_kind[&top_immigrant] {
-                self.kinds_status -= kind_status_operand;  // zero the kth bit.
+                self.kinds_status -= kind_status_operand; // zero the kth bit.
             }
         }
         self.stacks[stack_ind].push_immigrants(immigrants);
@@ -100,25 +104,19 @@ impl Game {
     }
 
     fn move_units(&mut self, from: usize, to: usize, limit_: Option<usize>) {
+        let move_approved: bool = limit_.is_some() || self.is_move_legal(from, to); // TODO: illegal moves should prompt users for new input.
         let immigrants: &mut Stack = &mut Stack::new();
         self.stacks[from].pop_immigrants_with_limit(immigrants, limit_);
-        let kind: Kind =  immigrants.clone_top_unit();
+        let kind: Kind = immigrants.clone_top_unit();
         let quantity: usize = immigrants.units.len();
-        let move_approved: bool =
-            limit_.is_some() || self.move_is_legal(&immigrants, &self.stacks[to]); // TODO: illegal moves should prompt users for new input.
         let dest: usize = if move_approved { to } else { from };
         self.stacks[dest].push_immigrants(immigrants);
-        
+
         if move_approved {
             self.update_state(from, to);
             match limit_ {
                 Some(_) => {} // When a limit is specified this is an undo move, it should not be ledged.
-                _ => self.ledge(
-                    from,
-                    to,
-                    kind,
-                    quantity,
-                ),
+                _ => self.ledge(from, to, kind, quantity),
             };
         }
     }
@@ -142,7 +140,7 @@ impl Game {
                 self.ledger.pop();
                 self.move_forcefully(from, to, quantity);
             }
-            _ => {}  // No moves to undo.
+            _ => {} // No moves to undo.
         }
     }
 
