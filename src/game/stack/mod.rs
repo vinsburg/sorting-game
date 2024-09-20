@@ -5,13 +5,13 @@ use std::slice::Iter;
 use kind::Kind;
 
 pub struct Stack {
-    pub size: usize,
+    pub capacity: usize,
     pub units: Vec<Kind>,
 }
 
 impl Stack {
-    pub fn new(size: usize, units: Vec<Kind>) -> Stack {
-        Stack { size, units }
+    pub fn new(capacity: usize, units: Vec<Kind>) -> Stack {
+        Stack { capacity, units }
     }
 
     pub fn new_empty() -> Stack {
@@ -20,7 +20,7 @@ impl Stack {
 
     pub fn clone(&self) -> Stack {
         Stack::new(
-            self.size,
+            self.capacity(),
             self.units.iter().map(|unit| unit.clone()).collect(),
         )
     }
@@ -30,7 +30,7 @@ impl Stack {
     }
 
     pub fn get_vacancy(&self) -> usize {
-        self.size - self.len()
+        self.capacity() - self.len()
     }
 
     pub fn clone_top_unit(&self) -> Kind {
@@ -77,6 +77,6 @@ impl Stack {
     }
 
     pub fn capacity(&self) -> usize {
-        self.size
+        self.capacity
     }
 }
