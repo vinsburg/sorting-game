@@ -62,6 +62,8 @@ impl Game {
             true => "You Won! 🎉",
             false => "Stage complete! 💪",
         };
+
+        self.render();
         println!(
             "All Stacks Sorted! - {}\nPress Enter to continue, or Ctrl+C to exit.",
             game_complete_message
@@ -70,10 +72,30 @@ impl Game {
     }
 
     pub fn read_valid_input(&self) -> UserInput {
-        let user_input: UserInput;
+        let mut user_input: UserInput = UserInput::new_menu_option(MenuOption::Help);
         let mut input: String = String::new();
+        let default_directive: String = "Select stacks to move from and to (e.g., '2 3')\nType 'u' to undo or 'r' to reset the stage".to_string();
+        let invalid_input_prompt: String = format!(
+            "Invalid input!\nPlease enter two different numbers between 1 and {} separated by a space", self.stacks.len()
+        );
+        let mut current_directive: String;
+        let mut next_directive: String = String::new();
+
         loop {
-            print!("Select stacks to move from and to (e.g., '2 3').\nType 'u' to undo or 'r' to reset the stage: ");
+            self.render();
+            if self.stage_complete() {
+                break;
+            }
+
+            if next_directive.len() > 0 {
+                current_directive = next_directive.clone();
+                next_directive.clear();
+            } else {
+                current_directive = default_directive.clone();
+            }
+
+            print!("{}: ", current_directive);
+
             io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
             input.clear();
             io::stdin().read_line(&mut input).unwrap();
@@ -87,17 +109,14 @@ impl Game {
                 _ => {
                     let parts: Vec<&str> = input.trim().split_whitespace().collect();
                     if parts.len() != 2 {
-                        println!("Please enter two numbers separated by a space.");
+                        next_directive = invalid_input_prompt.clone();
                         continue;
                     }
 
                     let from = match parts[0].parse::<usize>() {
                         Ok(num) if num - 1 < self.stacks.len() => num - 1,
                         _ => {
-                            println!(
-                                "Invalid 'from' stack. Enter a number between 0 and {}.",
-                                self.stacks.len() - 1
-                            );
+                            next_directive = invalid_input_prompt.clone();
                             continue;
                         }
                     };
@@ -105,28 +124,20 @@ impl Game {
                     let to = match parts[1].parse::<usize>() {
                         Ok(num) if ((num - 1 < self.stacks.len()) && (num - 1 != from)) => num - 1,
                         _ => {
-                            println!(
-                                "Invalid 'to' stack. Enter another number between 0 and {}.",
-                                self.stacks.len() - 1
-                            );
+                            next_directive = invalid_input_prompt.clone();
                             continue;
                         }
                     };
 
                     if self.move_requires_more_room(from, to) {
-                        println!(
-                            "No room in stack {} for stack {}'s top.",
-                            to + 1,
-                            from + 1,
-                        );
+                        next_directive =
+                            Game::illegal_move_prompt("Not enough room in the target stack");
                         continue;
                     }
 
-                    if self.move_tops_mismatch(from, to) {
-                        println!(
-                            "Stack {} top mismatches stack {}.",
-                            to + 1,
-                            from + 1,
+                    if self.stack_tops_mismatch(from, to) {
+                        next_directive = Game::illegal_move_prompt(
+                            "Units can only be moved towards identical units, or empty stacks",
                         );
                         continue;
                     }
@@ -140,6 +151,10 @@ impl Game {
             break;
         }
         return user_input;
+    }
+
+    fn illegal_move_prompt(prompt: &str) -> String {
+        format!("Illegal move!\n{}.\nplease try again", prompt)
     }
 }
 

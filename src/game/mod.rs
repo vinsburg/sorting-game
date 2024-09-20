@@ -61,7 +61,7 @@ impl Game {
     }
 
     fn _move_is_illegal(&self, from: usize, to: usize) -> bool {
-        self.move_requires_more_room(from, to) || self.move_tops_mismatch(from, to)
+        self.move_requires_more_room(from, to) || self.stack_tops_mismatch(from, to)
     }
 
     fn move_requires_more_room(&self, from: usize, to: usize) -> bool {
@@ -72,8 +72,8 @@ impl Game {
 
         immigrants.units.len() > target_residents.get_vacancy()
     }
-    
-    fn move_tops_mismatch(&self, from: usize, to: usize) -> bool {
+
+    fn stack_tops_mismatch(&self, from: usize, to: usize) -> bool {
         let source_residents: &mut Stack = &mut self.stacks[from].clone();
         let target_residents: &Stack = &self.stacks[to];
         let immigrants: &mut Stack = &mut Stack::new();
@@ -156,7 +156,6 @@ impl Game {
     fn turn_loop(&mut self) {
         let stage_backup: Game = self.clone();
         loop {
-            self.render();
             if self.stage_complete() {
                 break;
             }
