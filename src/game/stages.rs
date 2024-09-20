@@ -9,7 +9,7 @@ impl Game {
             let vec_len: usize = vec.len();
             let mut units: Vec<Kind> = Vec::new();
             for unit_id in vec {
-                let kind: Kind = Kind::new(unit_id);
+                let kind: Kind = Kind::new(unit_id, 1);
                 if !kind.is_empty() {
                     units.push(kind);
                 }
