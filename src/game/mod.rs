@@ -60,7 +60,7 @@ impl Game {
         kind_indices
     }
 
-    fn move_is_illegal(&self, from: usize, to: usize) -> bool {  // TODO: split in two and prompt users accordingly.
+    fn _move_is_illegal(&self, from: usize, to: usize) -> bool {
         self.move_requires_more_room(from, to) || self.move_tops_mismatch(from, to)
     }
 

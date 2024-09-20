@@ -73,7 +73,7 @@ impl Game {
         let user_input: UserInput;
         let mut input: String = String::new();
         loop {
-            print!("Select stacks to move from and to (e.g., '2 3'). Type 'u' to undo or 'r' to reset the stage: ");
+            print!("Select stacks to move from and to (e.g., '2 3').\nType 'u' to undo or 'r' to reset the stage: ");
             io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
             input.clear();
             io::stdin().read_line(&mut input).unwrap();
@@ -95,7 +95,7 @@ impl Game {
                         Ok(num) if num - 1 < self.stacks.len() => num - 1,
                         _ => {
                             println!(
-                                "Invalid input for 'from' stack. Enter a number between 0 and {}.",
+                                "Invalid 'from' stack. Enter a number between 0 and {}.",
                                 self.stacks.len() - 1
                             );
                             continue;
@@ -106,20 +106,27 @@ impl Game {
                         Ok(num) if ((num - 1 < self.stacks.len()) && (num - 1 != from)) => num - 1,
                         _ => {
                             println!(
-                                "Invalid input for 'to' stack. Enter another number between 0 and {}.",
+                                "Invalid 'to' stack. Enter another number between 0 and {}.",
                                 self.stacks.len() - 1
                             );
                             continue;
                         }
                     };
 
-                    if self.move_is_illegal(from, to) {
+                    if self.move_requires_more_room(from, to) {
                         println!(
-                            "Illegal move from {} to {}.
-                        a) Target stack must have room for the top units from the source stack. 
-                        b) Top units in the target stack must have the same kind as in the source.",
+                            "No room in stack {} for stack {}'s top.",
+                            to + 1,
                             from + 1,
-                            to + 1
+                        );
+                        continue;
+                    }
+
+                    if self.move_tops_mismatch(from, to) {
+                        println!(
+                            "Stack {} top mismatches stack {}.",
+                            to + 1,
+                            from + 1,
                         );
                         continue;
                     }
