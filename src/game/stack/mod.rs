@@ -5,8 +5,8 @@ use std::slice::Iter;
 use kind::Kind;
 
 pub struct Stack {
-    pub capacity: usize,
-    pub units: Vec<Kind>,
+    capacity: usize,
+    units: Vec<Kind>,
 }
 
 impl Stack {
