@@ -14,10 +14,7 @@ impl Game {
                     units.push(kind);
                 }
             }
-            stacks.push(Stack {
-                size: vec_len,
-                units,
-            });
+            stacks.push(Stack::new(vec_len, units));
         }
         stacks
     }
@@ -63,7 +60,7 @@ impl Game {
         ];
         let mut stages: Vec<Game> = Vec::new();
         for (ind, vec_stacks) in stage_vec.iter().enumerate() {
-            let name: String = format!("Stage - {}", ind+1);
+            let name: String = format!("Stage - {}", ind + 1);
             stages.push(Game::new_from_vecs(vec_stacks.clone(), Some(name)));
         }
         stages

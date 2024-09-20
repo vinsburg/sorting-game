@@ -10,18 +10,19 @@ pub struct Stack {
 }
 
 impl Stack {
+    pub fn new(size: usize, units: Vec<Kind>) -> Stack {
+        Stack { size, units }
+    }
+
     pub fn new_empty() -> Stack {
-        Stack {
-            size: 0,
-            units: Vec::new(),
-        }
+        Stack::new(0, Vec::new())
     }
 
     pub fn clone(&self) -> Stack {
-        Stack {
-            size: self.size,
-            units: self.units.iter().map(|unit| unit.clone()).collect(),
-        }
+        Stack::new(
+            self.size,
+            self.units.iter().map(|unit| unit.clone()).collect(),
+        )
     }
 
     pub fn is_vacant(&self) -> bool {
