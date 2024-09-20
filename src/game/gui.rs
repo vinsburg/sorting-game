@@ -49,7 +49,7 @@ impl Game {
                     .as_str(),
                 );
             }
-            for _ in stack.units.len()..stack.size {
+            for _ in stack.len()..stack.size {
                 buffer.push_str("__ ");
             }
             println!("{:>2}: {}", stack_ind + 1, buffer);

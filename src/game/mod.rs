@@ -70,7 +70,7 @@ impl Game {
         let immigrants: &mut Stack = &mut Stack::new();
         source_residents.pop_immigrants(immigrants);
 
-        immigrants.units.len() > target_residents.get_vacancy()
+        immigrants.len() > target_residents.get_vacancy()
     }
 
     fn stack_tops_mismatch(&self, from: usize, to: usize) -> bool {
@@ -96,7 +96,7 @@ impl Game {
 
         let kind_status_operand: usize = 1 << self.kind_indices[&top_immigrant];
         self.kinds_status |= kind_status_operand; // Initially set the kth bit to 1.
-        if immigrants.units.len() != self.units_per_kind[&top_immigrant] {
+        if immigrants.len() != self.units_per_kind[&top_immigrant] {
             self.kinds_status -= kind_status_operand; // zero the kth bit.
         }
     }
@@ -120,7 +120,7 @@ impl Game {
         let immigrants: &mut Stack = &mut Stack::new();
         self.stacks[from].pop_immigrants_with_limit(immigrants, limit_);
         let kind: Kind = immigrants.clone_top_unit();
-        let quantity: usize = immigrants.units.len();
+        let quantity: usize = immigrants.len();
         self.stacks[to].push_immigrants(immigrants);
 
         self.update_state(from, to);

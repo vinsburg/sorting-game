@@ -23,15 +23,15 @@ impl Stack {
     }
 
     pub fn is_vacant(&self) -> bool {
-        self.units.len() == 0
+        self.len() == 0
     }
 
     pub fn get_vacancy(&self) -> usize {
-        self.size - self.units.len()
+        self.size - self.len()
     }
 
     pub fn clone_top_unit(&self) -> Kind {
-        if self.units.len() == 0 {
+        if self.len() == 0 {
             return Kind::new_empty();
         } else {
             return self.units.last().unwrap().clone();
@@ -43,7 +43,7 @@ impl Stack {
         let mut next_immigrant_is_legal: bool = !self.is_vacant();
         let mut counter: usize = match limit_ {
             Some(q) => q,
-            None => self.units.len(),
+            None => self.len(),
         };
 
         while next_immigrant_is_legal && (counter > 0) {
@@ -59,9 +59,13 @@ impl Stack {
     }
 
     pub fn push_immigrants(&mut self, immigrants: &mut Stack) {
-        while immigrants.units.len() != 0 {
+        while immigrants.len() != 0 {
             let immigrant: Kind = immigrants.units.pop().unwrap();
             self.units.push(immigrant);
         }
+    }
+
+    pub fn len(&self) -> usize {
+        self.units.len()
     }
 }
