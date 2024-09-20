@@ -75,4 +75,8 @@ impl Stack {
     pub fn iter_units(&self) -> Iter<'_, Kind> {
         self.units.iter()
     }
+
+    pub fn capacity(&self) -> usize {
+        self.size
+    }
 }
