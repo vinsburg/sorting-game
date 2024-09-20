@@ -1,5 +1,7 @@
 pub mod kind;
 
+use std::slice::Iter;
+
 use kind::Kind;
 
 pub struct Stack {
@@ -67,5 +69,9 @@ impl Stack {
 
     pub fn len(&self) -> usize {
         self.units.len()
+    }
+
+    pub fn iter_units(&self) -> Iter<'_, Kind> {
+        self.units.iter()
     }
 }

@@ -43,7 +43,7 @@ impl Game {
     fn count_kinds(stacks: &[Stack]) -> HashMap<Kind, usize> {
         let mut units_per_kind: HashMap<Kind, usize> = HashMap::new(); // Initialize the HashMap
         for stack in stacks {
-            for unit in &stack.units {
+            for unit in stack.iter_units() {
                 *units_per_kind.entry(*unit).or_insert(0) += 1; // Populate the HashMap
             }
         }
