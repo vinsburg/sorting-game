@@ -10,7 +10,7 @@ pub struct Stack {
 }
 
 impl Stack {
-    pub fn new() -> Stack {
+    pub fn new_empty() -> Stack {
         Stack {
             size: 0,
             units: Vec::new(),

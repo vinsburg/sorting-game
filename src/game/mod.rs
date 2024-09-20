@@ -67,7 +67,7 @@ impl Game {
     fn move_requires_more_room(&self, from: usize, to: usize) -> bool {
         let source_residents: &mut Stack = &mut self.stacks[from].clone();
         let target_residents: &Stack = &self.stacks[to];
-        let immigrants: &mut Stack = &mut Stack::new();
+        let immigrants: &mut Stack = &mut Stack::new_empty();
         source_residents.pop_immigrants(immigrants);
 
         immigrants.len() > target_residents.get_vacancy()
@@ -76,7 +76,7 @@ impl Game {
     fn stack_tops_mismatch(&self, from: usize, to: usize) -> bool {
         let source_residents: &mut Stack = &mut self.stacks[from].clone();
         let target_residents: &Stack = &self.stacks[to];
-        let immigrants: &mut Stack = &mut Stack::new();
+        let immigrants: &mut Stack = &mut Stack::new_empty();
         source_residents.pop_immigrants(immigrants);
 
         let top_immigrant: Kind = immigrants.clone_top_unit();
@@ -87,7 +87,7 @@ impl Game {
     }
 
     fn update_kind_status(&mut self, stack_ind: usize) {
-        let immigrants: &mut Stack = &mut Stack::new();
+        let immigrants: &mut Stack = &mut Stack::new_empty();
         self.stacks[stack_ind].clone().pop_immigrants(immigrants);
         let top_immigrant: Kind = immigrants.clone_top_unit();
         if top_immigrant.is_empty() {
@@ -117,7 +117,7 @@ impl Game {
     }
 
     fn move_units(&mut self, from: usize, to: usize, limit_: Option<usize>) {
-        let immigrants: &mut Stack = &mut Stack::new();
+        let immigrants: &mut Stack = &mut Stack::new_empty();
         self.stacks[from].pop_immigrants_with_limit(immigrants, limit_);
         let kind: Kind = immigrants.clone_top_unit();
         let quantity: usize = immigrants.len();
