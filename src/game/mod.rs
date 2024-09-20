@@ -61,16 +61,29 @@ impl Game {
     }
 
     fn move_is_illegal(&self, from: usize, to: usize) -> bool {  // TODO: split in two and prompt users accordingly.
+        self.move_requires_more_room(from, to) || self.move_tops_mismatch(from, to)
+    }
+
+    fn move_requires_more_room(&self, from: usize, to: usize) -> bool {
         let source_residents: &mut Stack = &mut self.stacks[from].clone();
         let target_residents: &Stack = &self.stacks[to];
         let immigrants: &mut Stack = &mut Stack::new();
         source_residents.pop_immigrants(immigrants);
+
+        immigrants.units.len() > target_residents.get_vacancy()
+    }
+    
+    fn move_tops_mismatch(&self, from: usize, to: usize) -> bool {
+        let source_residents: &mut Stack = &mut self.stacks[from].clone();
+        let target_residents: &Stack = &self.stacks[to];
+        let immigrants: &mut Stack = &mut Stack::new();
+        source_residents.pop_immigrants(immigrants);
+
         let top_immigrant: Kind = immigrants.clone_top_unit();
         let top_resident: Kind = target_residents.clone_top_unit();
         let tops_match: bool =
             (top_immigrant == top_resident) || top_immigrant.is_empty() || top_resident.is_empty();
-        let there_is_no_room: bool = immigrants.units.len() > target_residents.get_vacancy();
-        there_is_no_room || !tops_match
+        !tops_match
     }
 
     fn update_kind_status(&mut self, stack_ind: usize) {
