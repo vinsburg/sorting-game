@@ -14,10 +14,6 @@ impl Stack {
         Stack { capacity, units }
     }
 
-    pub fn new_empty() -> Stack {
-        Stack::new(0, Vec::new())
-    }
-
     pub fn clone(&self) -> Stack {
         Stack::new(
             self.capacity(),
