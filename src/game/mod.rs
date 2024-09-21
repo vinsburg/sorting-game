@@ -68,9 +68,9 @@ impl Game {
         let source_residents: &mut Stack = &mut self.stacks[from].clone();
         let target_residents: &Stack = &self.stacks[to];
         let immigrants: &mut Stack = &mut Stack::new_empty();
-        source_residents.pop_immigrants(immigrants);
+        let immigrants: Kind = source_residents.pop_immigrants(immigrants);
 
-        immigrants.len() > target_residents.get_vacancy()
+        immigrants.get_quantity() > target_residents.get_vacancy()
     }
 
     fn stack_tops_mismatch(&self, from: usize, to: usize) -> bool {

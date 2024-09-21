@@ -48,7 +48,6 @@ impl Stack {
             Some(q) => q,
             None => self.len(),
         };
-        let kind_immigrant: Kind = Kind::new(top_immigrant.get_id(), counter);
 
         while next_immigrant_is_legal && (counter > 0) {
             self.units.pop();
@@ -57,7 +56,7 @@ impl Stack {
             next_immigrant_is_legal = self.clone_top_unit() == top_immigrant;
         }
 
-        kind_immigrant
+        Kind::new(top_immigrant.get_id(), immigrants.len())
     }
 
     pub fn pop_immigrants(&mut self, immigrants: &mut Stack) -> Kind {
