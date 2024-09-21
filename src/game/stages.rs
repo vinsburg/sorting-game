@@ -5,16 +5,21 @@ use crate::game::Game;
 impl Game {
     fn vecs_to_stacks(vecs: Vec<Vec<usize>>) -> Vec<Stack> {
         let mut stacks: Vec<Stack> = Vec::new();
+        let mut stack: Stack;
+        let mut vec_len: usize;
+        let mut units: Vec<Kind>;
+        let mut kind: Kind;
         for vec in vecs {
-            let vec_len: usize = vec.len();
-            let mut units: Vec<Kind> = Vec::new();
+            vec_len = vec.len();
+            units = Vec::new();
             for unit_id in vec {
-                let kind: Kind = Kind::new(unit_id, 1);
+                kind = Kind::new(unit_id, 1);
                 if !kind.is_empty() {
                     units.push(kind);
                 }
             }
-            stacks.push(Stack::new(vec_len, units));
+            stack = Stack::new(vec_len, units);
+            stacks.push(stack);
         }
         stacks
     }
