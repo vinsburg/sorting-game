@@ -118,9 +118,8 @@ impl Game {
 
     fn move_units(&mut self, from: usize, to: usize, limit_: Option<usize>) {
         let immigrants: &mut Stack = &mut Stack::new_empty();
-        self.stacks[from].pop_immigrants_with_limit(immigrants, limit_);
-        let kind: Kind = immigrants.clone_top_unit();
-        let quantity: usize = immigrants.len();
+        let kind: Kind = self.stacks[from].pop_immigrants_with_limit(immigrants, limit_);
+        let quantity: usize = kind.get_quantity();
         self.stacks[to].push_immigrants(immigrants);
 
         self.update_state(from, to);

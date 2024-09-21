@@ -41,13 +41,14 @@ impl Stack {
         }
     }
 
-    pub fn pop_immigrants_with_limit(&mut self, immigrants: &mut Stack, limit_: Option<usize>) {
+    pub fn pop_immigrants_with_limit(&mut self, immigrants: &mut Stack, limit_: Option<usize>) -> Kind{
         let top_immigrant: Kind = self.clone_top_unit();
         let mut next_immigrant_is_legal: bool = !self.is_vacant();
         let mut counter: usize = match limit_ {
             Some(q) => q,
             None => self.len(),
         };
+        let kind_immigrant: Kind = Kind::new(top_immigrant.get_id(), counter);
 
         while next_immigrant_is_legal && (counter > 0) {
             self.units.pop();
@@ -55,10 +56,12 @@ impl Stack {
             counter -= 1;
             next_immigrant_is_legal = self.clone_top_unit() == top_immigrant;
         }
+
+        kind_immigrant
     }
 
-    pub fn pop_immigrants(&mut self, immigrants: &mut Stack) {
-        self.pop_immigrants_with_limit(immigrants, None);
+    pub fn pop_immigrants(&mut self, immigrants: &mut Stack) -> Kind {
+        self.pop_immigrants_with_limit(immigrants, None)
     }
 
     pub fn push_immigrants(&mut self, immigrants: &mut Stack) {
