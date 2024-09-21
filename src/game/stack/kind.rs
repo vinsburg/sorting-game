@@ -1,8 +1,10 @@
 const EMPTY_SLOT_VALUE: usize = 0;
 
+pub type KindId = usize;
+
 #[derive(Clone, PartialEq, Eq, Copy, Hash, Ord, PartialOrd)]
 pub struct Kind {
-    id: usize,
+    id: KindId,
     quantity: usize,
 }
 
