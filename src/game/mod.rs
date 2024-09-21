@@ -4,14 +4,14 @@ mod stack;
 mod stages;
 
 use entry::Entry;
-use stack::kind::Kind;
+use stack::kind::{Kind, KindId};
 use stack::Stack;
 use std::collections::HashMap;
 
 pub struct Game {
     stacks: Vec<Stack>,
-    units_per_kind: HashMap<Kind, usize>,
-    kind_indices: HashMap<Kind, usize>,
+    units_per_kind: HashMap<KindId, usize>,
+    kind_indices: HashMap<KindId, usize>,
     kinds_status: usize,
     turn: usize,
     stage_name: String,
@@ -20,8 +20,8 @@ pub struct Game {
 
 impl Game {
     fn new(stacks: Vec<Stack>, stage_name: Option<String>) -> Game {
-        let units_per_kind: HashMap<Kind, usize> = Game::count_kinds(&stacks);
-        let kind_indices: HashMap<Kind, usize> = Game::index_kinds(&units_per_kind);
+        let units_per_kind: HashMap<KindId, usize> = Game::count_kinds(&stacks);
+        let kind_indices: HashMap<KindId, usize> = Game::index_kinds(&units_per_kind);
         Game {
             stacks,
             units_per_kind,
@@ -40,21 +40,21 @@ impl Game {
         )
     }
 
-    fn count_kinds(stacks: &[Stack]) -> HashMap<Kind, usize> {
-        let mut units_per_kind: HashMap<Kind, usize> = HashMap::new(); // Initialize the HashMap
+    fn count_kinds(stacks: &[Stack]) -> HashMap<KindId, usize> {
+        let mut units_per_kind: HashMap<KindId, usize> = HashMap::new(); // Initialize the HashMap
         for stack in stacks {
             for unit in stack.iter_units() {
-                *units_per_kind.entry(*unit).or_insert(0) += 1; // Populate the HashMap
+                *units_per_kind.entry(unit.get_id()).or_insert(0) += 1; // Populate the HashMap
             }
         }
         units_per_kind
     }
 
-    fn index_kinds(units_per_kind: &HashMap<Kind, usize>) -> HashMap<Kind, usize> {
-        let mut kind_indices: HashMap<Kind, usize> = HashMap::new();
-        let mut kinds: Vec<&Kind> = units_per_kind.keys().collect();
-        kinds.sort(); // Sort kinds by their id
-        for (index, kind) in kinds.iter().enumerate() {
+    fn index_kinds(units_per_kind: &HashMap<KindId, usize>) -> HashMap<KindId, usize> {
+        let mut kind_indices: HashMap<KindId, usize> = HashMap::new();
+        let mut kind_ids: Vec<&KindId> = units_per_kind.keys().collect();
+        kind_ids.sort(); // Sort kinds by their id
+        for (index, kind) in kind_ids.iter().enumerate() {
             kind_indices.insert(**kind, index);
         }
         kind_indices
@@ -80,22 +80,23 @@ impl Game {
         let immigrants: Kind = source_residents.pop_immigrants(immigrants);
 
         let top_resident: Kind = target_residents.clone_top_unit();
-        let tops_match: bool =
-            (immigrants.get_id() == top_resident.get_id()) || immigrants.is_empty() || top_resident.is_empty();
+        let tops_match: bool = (immigrants.get_id() == top_resident.get_id())
+            || immigrants.is_empty()
+            || top_resident.is_empty();
         !tops_match
     }
 
     fn update_kind_status(&mut self, stack_ind: usize) {
         let immigrants: &mut Stack = &mut Stack::new_empty();
-        let top_immigrant: Kind = self.stacks[stack_ind].clone_top_unit();
         let immigrants: Kind = self.stacks[stack_ind].clone().pop_immigrants(immigrants);
         if immigrants.is_empty() {
             return;
         }
 
-        let kind_status_operand: usize = 1 << self.kind_indices[&top_immigrant];  // TODO: access kind_indices with getter
+        let kind_status_operand: usize = 1 << self.kind_indices[&immigrants.get_id()]; // TODO: access kind_indices with getter
         self.kinds_status |= kind_status_operand; // Initially set the kth bit to 1.
-        if immigrants.get_quantity() != self.units_per_kind[&top_immigrant] {  // TODO: access units_per_kind with getter
+        if immigrants.get_quantity() != self.units_per_kind[&immigrants.get_id()] {
+            // TODO: access kind_indices with getter
             self.kinds_status -= kind_status_operand; // zero the kth bit.
         }
     }
