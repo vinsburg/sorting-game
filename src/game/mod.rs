@@ -77,12 +77,11 @@ impl Game {
         let source_residents: &mut Stack = &mut self.stacks[from].clone();
         let target_residents: &Stack = &self.stacks[to];
         let immigrants: &mut Stack = &mut Stack::new_empty();
-        source_residents.pop_immigrants(immigrants);
+        let immigrants: Kind = source_residents.pop_immigrants(immigrants);
 
-        let top_immigrant: Kind = immigrants.clone_top_unit();
         let top_resident: Kind = target_residents.clone_top_unit();
         let tops_match: bool =
-            (top_immigrant == top_resident) || top_immigrant.is_empty() || top_resident.is_empty();
+            (immigrants.get_id() == top_resident.get_id()) || immigrants.is_empty() || top_resident.is_empty();
         !tops_match
     }
 
