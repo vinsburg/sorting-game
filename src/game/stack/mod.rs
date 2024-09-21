@@ -21,6 +21,19 @@ impl Stack {
         )
     }
 
+    pub fn new_from_vec(vec: Vec<usize>) -> Stack {
+        let mut units: Vec<Kind> = Vec::new();
+        let mut kind: Kind;
+        let capacity: usize = vec.len();
+        for unit_id in vec {
+            kind = Kind::new(unit_id, 1);
+            if !kind.is_empty() {
+                units.push(kind);
+            }
+        }
+        Stack::new(capacity, units)
+    }
+
     pub fn is_vacant(&self) -> bool {
         self.len() == 0
     }
