@@ -77,7 +77,7 @@ impl Game {
         let target_residents: &Stack = &self.stacks[to];
         let immigrants: Kind = source_residents.pop_immigrants();
 
-        let top_resident: Kind = target_residents.clone_top_unit();
+        let top_resident: Kind = target_residents.clone_top_unit();  // TODO: implement get_top_unit_id instead.
         let tops_match: bool = (immigrants.get_id() == top_resident.get_id())
             || immigrants.is_empty()
             || top_resident.is_empty();
