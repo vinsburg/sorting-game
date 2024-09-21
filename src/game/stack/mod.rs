@@ -41,26 +41,26 @@ impl Stack {
         }
     }
 
-    pub fn pop_immigrants_with_limit(&mut self, immigrants: &mut Stack, limit_: Option<usize>) -> Kind{
+    pub fn pop_immigrants_with_limit(&mut self, limit_: Option<usize>) -> Kind{
         let top_immigrant: Kind = self.clone_top_unit();
         let mut next_immigrant_is_legal: bool = !self.is_vacant();
-        let mut counter: usize = match limit_ {
+        let limit: usize = match limit_ {
             Some(q) => q,
             None => self.len(),
         };
+        let mut quantity: usize = 0;
 
-        while next_immigrant_is_legal && (counter > 0) {
+        while next_immigrant_is_legal && (limit > quantity) {
             self.units.pop();
-            immigrants.units.push(top_immigrant.clone());
-            counter -= 1;
+            quantity += 1;
             next_immigrant_is_legal = self.clone_top_unit() == top_immigrant;
         }
 
-        Kind::new(top_immigrant.get_id(), immigrants.len())
+        Kind::new(top_immigrant.get_id(), quantity)
     }
 
-    pub fn pop_immigrants(&mut self, immigrants: &mut Stack) -> Kind {
-        self.pop_immigrants_with_limit(immigrants, None)
+    pub fn pop_immigrants(&mut self) -> Kind {
+        self.pop_immigrants_with_limit(None)
     }
 
     pub fn push_immigrants(&mut self, immigrants: Kind) {
