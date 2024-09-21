@@ -13,7 +13,8 @@ impl Kind {
 
     pub fn new_empty() -> Kind {
         Kind {
-            id: EMPTY_SLOT_VALUE, quantity: 0,
+            id: EMPTY_SLOT_VALUE,
+            quantity: 0,
         }
     }
 
@@ -23,5 +24,13 @@ impl Kind {
 
     pub fn get_id(&self) -> usize {
         self.id
+    }
+
+    pub fn get_quantity(&self) -> usize {
+        self.quantity
+    }
+
+    pub fn set_quantity(&mut self, quantity: usize) {
+        self.quantity = quantity;
     }
 }
