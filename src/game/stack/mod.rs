@@ -63,10 +63,10 @@ impl Stack {
         self.pop_immigrants_with_limit(immigrants, None)
     }
 
-    pub fn push_immigrants(&mut self, immigrants: &mut Stack) {
-        while immigrants.len() != 0 {
-            let immigrant: Kind = immigrants.units.pop().unwrap();
-            self.units.push(immigrant);
+    pub fn push_immigrants(&mut self, immigrants: Kind) {
+        let immigrant: Kind = Kind::new(immigrants.get_id(), 1);
+        for _ in 0..immigrants.get_quantity() {
+            self.units.push(immigrant.clone());
         }
     }
 

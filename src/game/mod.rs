@@ -120,7 +120,7 @@ impl Game {
         let immigrants: &mut Stack = &mut Stack::new_empty();
         let kind: Kind = self.stacks[from].pop_immigrants_with_limit(immigrants, limit_);
         let quantity: usize = kind.get_quantity();
-        self.stacks[to].push_immigrants(immigrants);
+        self.stacks[to].push_immigrants(kind);
 
         self.update_state(from, to);
         match limit_ {
