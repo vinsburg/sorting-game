@@ -1,8 +1,9 @@
 pub mod kind;
 
+use std::iter::Map;
 use std::slice::Iter;
 
-use kind::Kind;
+use kind::{Kind, KindId};
 
 pub struct Stack {
     capacity: usize,
@@ -50,7 +51,7 @@ impl Stack {
         }
     }
 
-    pub fn pop_immigrants_with_limit(&mut self, limit_: Option<usize>) -> Kind{
+    pub fn pop_immigrants_with_limit(&mut self, limit_: Option<usize>) -> Kind {
         let top_immigrant: Kind = self.clone_top_unit();
         let mut next_immigrant_is_legal: bool = !self.is_vacant();
         let limit: usize = match limit_ {
@@ -85,6 +86,10 @@ impl Stack {
 
     pub fn iter_units(&self) -> Iter<'_, Kind> {
         self.units.iter()
+    }
+
+    pub fn iter_unit_ids(&self) -> Map<Iter<'_, Kind>, fn(&Kind) -> KindId> {
+        self.iter_units().map(|unit| unit.get_id())
     }
 
     pub fn capacity(&self) -> usize {

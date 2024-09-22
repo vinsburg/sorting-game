@@ -35,16 +35,13 @@ impl Game {
 
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut buffer: String = "".to_string();
-            for unit in stack.iter_units() {
-                let unit_index: usize = self.kind_indices[&unit.get_id()];  // TODO: access kind_indices with getter
+            for unit_id in stack.iter_unit_ids() {
+                let unit_index: usize = self.kind_indices[&unit_id]; // TODO: access kind_indices with getter
                 let color: [u8; 3] = COLORS[unit_index % COLORS.len()].clone();
                 buffer.push_str(
                     format!(
                         "\x1b[38;2;{};{};{}m{:>2}\x1b[0m ",
-                        color[0],
-                        color[1],
-                        color[2],
-                        unit.get_id()
+                        color[0], color[1], color[2], unit_id,
                     )
                     .as_str(),
                 );
