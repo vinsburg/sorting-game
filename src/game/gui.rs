@@ -46,7 +46,7 @@ impl Game {
                     .as_str(),
                 );
             }
-            for _ in stack.len()..stack.capacity() {
+            for _ in 0..stack.get_vacancy() {
                 buffer.push_str("__ ");
             }
             println!("{:>2}: {}", stack_ind + 1, buffer);

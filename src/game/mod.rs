@@ -65,19 +65,16 @@ impl Game {
     }
 
     fn move_requires_more_room(&self, from: usize, to: usize) -> bool {
-        let source_residents: &mut Stack = &mut self.stacks[from].clone();
-        let target_residents: &Stack = &self.stacks[to];
-        let immigrants: Kind = source_residents.pop_immigrants();
+        let immigrants: Kind = self.stacks[from].clone_top_unit();  // TODO: implement get_top_unit_quantity instead.
+        let vacancy: usize = self.stacks[to].get_vacancy();
 
-        immigrants.get_quantity() > target_residents.get_vacancy()
+        immigrants.get_quantity() > vacancy
     }
 
     fn stack_tops_mismatch(&self, from: usize, to: usize) -> bool {
-        let source_residents: &mut Stack = &mut self.stacks[from].clone();
-        let target_residents: &Stack = &self.stacks[to];
-        let immigrants: Kind = source_residents.pop_immigrants();
+        let immigrants: Kind = self.stacks[from].clone_top_unit();
+        let top_resident: Kind = self.stacks[to].clone_top_unit();  // TODO: implement get_top_unit_id instead.
 
-        let top_resident: Kind = target_residents.clone_top_unit();  // TODO: implement get_top_unit_id instead.
         let tops_match: bool = (immigrants.get_id() == top_resident.get_id())
             || immigrants.is_empty()
             || top_resident.is_empty();
@@ -85,7 +82,7 @@ impl Game {
     }
 
     fn update_kind_status(&mut self, stack_ind: usize) {
-        let immigrants: Kind = self.stacks[stack_ind].clone().pop_immigrants();
+        let immigrants: Kind = self.stacks[stack_ind].clone().pop_residents();
         if immigrants.is_empty() {
             return;
         }
@@ -114,7 +111,7 @@ impl Game {
     }
 
     fn move_units(&mut self, from: usize, to: usize, limit_: Option<usize>) {
-        let kind: Kind = self.stacks[from].pop_immigrants_with_limit(limit_);
+        let kind: Kind = self.stacks[from].pop_residents_with_limit(limit_);
         let quantity: usize = kind.get_quantity();
         self.stacks[to].push_immigrants(kind);
 

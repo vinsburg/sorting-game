@@ -1,6 +1,7 @@
-const EMPTY_SLOT_VALUE: usize = 0;
 
 pub type KindId = usize;
+
+const EMPTY_SLOT_VALUE: KindId = 0;
 
 #[derive(Clone, PartialEq, Eq, Copy, Hash, Ord, PartialOrd)]
 pub struct Kind {
@@ -34,5 +35,9 @@ impl Kind {
 
     pub fn set_quantity(&mut self, quantity: usize) {
         self.quantity = quantity;
+    }
+
+    pub fn get_empty_id() -> KindId {
+        EMPTY_SLOT_VALUE
     }
 }
