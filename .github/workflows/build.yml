@@ -23,6 +23,9 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
             artifact: sorting-game-linux-x86-64.tar.gz
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            artifact: sorting-game-linux-arm64.tar.gz
           - target: x86_64-pc-windows-msvc
             os: windows-latest
             artifact: sorting-game-windows-x86-64.zip
@@ -39,6 +42,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Install cross-compilation tools
+      if: matrix.target == 'aarch64-unknown-linux-gnu'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+        
     - name: Set up Rust
       uses: actions-rs/toolchain@v1
       with:
@@ -58,10 +67,18 @@ jobs:
         cargo install cargo-ndk
         export ANDROID_NDK_HOME=$ANDROID_NDK_LATEST_HOME
         cargo ndk --target aarch64-linux-android -- build --release
-      
+
+    - name: Build aarch64-linux binaries
+      if: matrix.target == 'aarch64-unknown-linux-gnu'
+      run: |
+        export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+        export CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc
+        export CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++
+
+        cargo build --release --target ${{ matrix.target }}
 
     - name: Build binaries
-      if: matrix.target != 'aarch64-linux-android'
+      if: matrix.target != 'aarch64-linux-android' && matrix.target != 'aarch64-unknown-linux-gnu'
       run: |
         cargo build --release --target ${{ matrix.target }}
 
@@ -130,6 +147,7 @@ jobs:
         name: Release ${{ steps.check-tag.outputs.tag }}
         files: |
           sorting-game-linux-x86-64.tar.gz
+          sorting-game-linux-arm64.tar.gz
           sorting-game-windows-x86-64.zip
           sorting-game-macos-x86-64.tar.gz
           sorting-game-macos-arm64.tar.gz
