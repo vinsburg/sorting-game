@@ -25,13 +25,13 @@ impl Kind {
 
     pub fn new_empty() -> Kind {
         Kind {
-            id: EMPTY_SLOT_VALUE,
+            id: Kind::get_empty_id(),
             quantity: 0,
         }
     }
 
     pub fn is_empty(&self) -> bool {
-        self.id == EMPTY_SLOT_VALUE
+        self.id == Kind::get_empty_id()
     }
 
     pub fn get_id(&self) -> usize {
