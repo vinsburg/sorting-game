@@ -4,7 +4,7 @@ mod stack;
 mod stages;
 
 use entry::Entry;
-use stack::kind::{Kind, KindId};
+use stack::kind::{Kind, KindId, HasId};
 use stack::Stack;
 use std::collections::HashMap;
 
@@ -87,11 +87,15 @@ impl Game {
             return;
         }
 
-        let kind_status_operand: usize = 1 << self.kind_indices[&immigrants.get_id()]; // TODO: access kind_indices with getter
+        let kind_status_operand: usize = 1 << self.get_kind_index(immigrants); // TODO: access kind_indices with getter
         self.kinds_status |= kind_status_operand; // Initially set the kth bit to 1.
         if immigrants.get_quantity() != self.get_total_quantity(immigrants) {
             self.kinds_status -= kind_status_operand; // zero the kth bit.
         }
+    }
+
+    fn get_kind_index<T: HasId>(&self, kind_or_id: T) -> usize {
+        self.kind_indices[&kind_or_id.get_id()]
     }
 
     fn get_total_quantity(&self, kind: Kind) -> usize {

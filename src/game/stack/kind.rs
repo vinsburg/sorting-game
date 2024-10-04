@@ -1,5 +1,14 @@
-
 pub type KindId = usize;
+
+pub trait HasId {
+    fn get_id(&self) -> KindId;
+}
+
+impl HasId for KindId {
+    fn get_id(&self) -> KindId {
+        *self
+    }
+}
 
 const EMPTY_SLOT_VALUE: KindId = 0;
 
@@ -39,5 +48,11 @@ impl Kind {
 
     pub fn get_empty_id() -> KindId {
         EMPTY_SLOT_VALUE
+    }
+}
+
+impl HasId for Kind {
+    fn get_id(&self) -> KindId {
+        self.id
     }
 }
