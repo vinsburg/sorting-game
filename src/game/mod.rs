@@ -82,7 +82,7 @@ impl Game {
     }
 
     fn update_kind_status(&mut self, stack_ind: usize) {
-        let immigrants: Kind = self.stacks[stack_ind].clone().pop_residents();
+        let immigrants: Kind = self.stacks[stack_ind].clone_top_unit();
         if immigrants.is_empty() {
             return;
         }
