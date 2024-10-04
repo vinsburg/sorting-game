@@ -66,11 +66,18 @@ impl Stack {
         self.get_capacity() - self.get_occupancy()
     }
 
-    pub fn clone_top_unit(&self) -> Kind {
+    pub fn clone_top_unit(&self) -> Kind {  // TODO: use match expression instead.
         if self.get_occupancy() == 0 {
             return Kind::new_empty();
         } else {
             return self.units.last().unwrap().clone();
+        }
+    }
+
+    pub fn get_top_unit_id(&self) -> KindId {
+        match self.units.last() {
+            Some(top_resident) => top_resident.get_id(),
+            None => Kind::get_empty_id(),
         }
     }
 

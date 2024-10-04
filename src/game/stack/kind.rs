@@ -1,7 +1,13 @@
+const EMPTY_SLOT_VALUE: KindId = 0;
+
 pub type KindId = usize;
 
 pub trait HasId {
     fn get_id(&self) -> KindId;
+}
+
+pub trait IsEmpty {
+    fn is_empty(&self) -> bool;
 }
 
 impl HasId for KindId {
@@ -10,7 +16,11 @@ impl HasId for KindId {
     }
 }
 
-const EMPTY_SLOT_VALUE: KindId = 0;
+impl IsEmpty for KindId {
+    fn is_empty(&self) -> bool {
+        *self == Kind::get_empty_id()
+    }
+}
 
 #[derive(Clone, PartialEq, Eq, Copy, Hash, Ord, PartialOrd)]
 pub struct Kind {

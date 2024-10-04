@@ -4,7 +4,7 @@ mod stack;
 mod stages;
 
 use entry::Entry;
-use stack::kind::{Kind, KindId, HasId};
+use stack::kind::{HasId, IsEmpty, Kind, KindId};
 use stack::Stack;
 use std::collections::HashMap;
 
@@ -65,19 +65,18 @@ impl Game {
     }
 
     fn move_requires_more_room(&self, from: usize, to: usize) -> bool {
-        let immigrants: Kind = self.stacks[from].clone_top_unit();  // TODO: implement get_top_unit_quantity instead.
+        let immigrants: Kind = self.stacks[from].clone_top_unit(); // TODO: implement get_top_unit_quantity instead.
         let vacancy: usize = self.stacks[to].get_vacancy();
 
         immigrants.get_quantity() > vacancy
     }
 
     fn stack_tops_mismatch(&self, from: usize, to: usize) -> bool {
-        let immigrants: Kind = self.stacks[from].clone_top_unit();
-        let top_resident: Kind = self.stacks[to].clone_top_unit();  // TODO: implement get_top_unit_id instead.
+        let immigrant_id: KindId = self.stacks[from].get_top_unit_id();
+        let resident_id: KindId = self.stacks[to].get_top_unit_id();
 
-        let tops_match: bool = (immigrants.get_id() == top_resident.get_id())
-            || immigrants.is_empty()
-            || top_resident.is_empty();
+        let tops_match: bool =
+            (immigrant_id == resident_id) || immigrant_id.is_empty() || resident_id.is_empty();
         !tops_match
     }
 
