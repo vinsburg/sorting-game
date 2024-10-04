@@ -78,15 +78,16 @@ impl Game {
     }
 
     fn update_kind_status(&mut self, stack_ind: usize) {
-        let immigrants: Kind = self.stacks[stack_ind].clone_top_unit();
-        if immigrants.is_empty() {
+        let resident_id: KindId = self.stacks[stack_ind].get_top_unit_id();
+        if resident_id.is_empty() {
             return;
         }
+        let resident_quantity: usize = self.stacks[stack_ind].get_top_unit_quantity();
 
-        let kind_status_operand: usize = 1 << self.get_kind_index(immigrants);
-        self.kinds_status |= kind_status_operand; // Initially set the kth bit to 1.
-        if immigrants.get_quantity() != self.get_total_quantity(immigrants) {
-            self.kinds_status -= kind_status_operand; // zero the kth bit.
+        let resident_bit: usize = 1 << self.get_kind_index(resident_id);
+        self.kinds_status |= resident_bit; // Initially set the resident bit to 1.
+        if resident_quantity != self.get_total_quantity(resident_id) {
+            self.kinds_status -= resident_bit; // zero the resident bit.
         }
     }
 
