@@ -80,6 +80,13 @@ impl Stack {
         }
     }
 
+    pub fn get_top_unit_quantity(&self) -> usize {
+        match self.units.last() {
+            Some(top_resident) => top_resident.get_quantity(),
+            None => 0,
+        }
+    }
+
     pub fn pop_residents_with_limit(&mut self, limit_: Option<usize>) -> Kind {
         let top_resident = &mut self.units.last_mut();
         let quantity: usize;

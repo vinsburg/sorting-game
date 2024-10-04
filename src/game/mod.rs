@@ -65,10 +65,7 @@ impl Game {
     }
 
     fn move_requires_more_room(&self, from: usize, to: usize) -> bool {
-        let immigrants: Kind = self.stacks[from].clone_top_unit(); // TODO: implement get_top_unit_quantity instead.
-        let vacancy: usize = self.stacks[to].get_vacancy();
-
-        immigrants.get_quantity() > vacancy
+        self.stacks[to].get_vacancy() < self.stacks[from].get_top_unit_quantity()
     }
 
     fn stack_tops_mismatch(&self, from: usize, to: usize) -> bool {
