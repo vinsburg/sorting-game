@@ -62,7 +62,7 @@ impl Game {
 
         self.render();
         println!(
-            "All Stacks Sorted! - {}\nPress Enter to continue, or Ctrl+C to exit.",
+            "All Stacks Sorted! - {}\nPress Enter to continue",
             game_complete_message
         );
         io::stdin().read_line(&mut String::new()).unwrap();
