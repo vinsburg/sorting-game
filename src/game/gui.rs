@@ -82,12 +82,12 @@ impl Game {
     pub fn read_valid_input(&self) -> UserInput {
         let mut user_input: UserInput = UserInput::new_menu_option(MenuOption::Help);
         let mut input: String = String::new();
-        let default_directive: String = "Input move or type 'h' for help".to_string();
+        let default_prompt: String = "Input move or type 'h' for help".to_string();
         let invalid_input_prompt: String = format!(
             "Invalid input!\nPlease enter two different numbers between 1 and {} separated by a space", self.stacks.len()
         );
-        let mut current_directive: String;
-        let mut next_directive: String = String::new();
+        let mut current_prompt: String;
+        let mut next_prompt: String = String::new();
 
         loop {
             self.render();
@@ -95,15 +95,15 @@ impl Game {
                 break;
             }
 
-            match next_directive.len() {
-                0 => current_directive = default_directive.clone(),
+            match next_prompt.len() {
+                0 => current_prompt = default_prompt.clone(),
                 _ => {
-                    current_directive = next_directive.clone();
-                    next_directive.clear();
+                    current_prompt = next_prompt.clone();
+                    next_prompt.clear();
                 },
             }
 
-            print!("{}: ", current_directive);
+            print!("{}: ", current_prompt);
 
             io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
             input.clear();
@@ -118,14 +118,14 @@ impl Game {
                 _ => {
                     let parts: Vec<&str> = input.trim().split_whitespace().collect();
                     if parts.len() != 2 {
-                        next_directive = invalid_input_prompt.clone();
+                        next_prompt = invalid_input_prompt.clone();
                         continue;
                     }
 
                     let from = match parts[0].parse::<usize>() {
                         Ok(num) if num - 1 < self.stacks.len() => num - 1,
                         _ => {
-                            next_directive = invalid_input_prompt.clone();
+                            next_prompt = invalid_input_prompt.clone();
                             continue;
                         }
                     };
@@ -133,19 +133,19 @@ impl Game {
                     let to = match parts[1].parse::<usize>() {
                         Ok(num) if ((num - 1 < self.stacks.len()) && (num - 1 != from)) => num - 1,
                         _ => {
-                            next_directive = invalid_input_prompt.clone();
+                            next_prompt = invalid_input_prompt.clone();
                             continue;
                         }
                     };
 
                     if self.move_requires_more_room(from, to) {
-                        next_directive =
+                        next_prompt =
                             Game::illegal_move_prompt("Not enough room in the target stack");
                         continue;
                     }
 
                     if self.stack_tops_mismatch(from, to) {
-                        next_directive = Game::illegal_move_prompt(
+                        next_prompt = Game::illegal_move_prompt(
                             "Units can only be moved towards identical units, or empty stacks",
                         );
                         continue;
