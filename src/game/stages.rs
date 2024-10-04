@@ -18,7 +18,7 @@ impl Game {
 
     pub fn get_stages() -> Vec<Game> {
         let stage_vec: Vec<Vec<Vec<usize>>> = vec![
-            vec![vec![2, 1, 0], vec![1, 2, 0], vec![2, 0]],
+            vec![vec![2, 1, 0], vec![1, 2], vec![2, 0]],
             vec![
                 vec![1, 2, 3, 0, 0],
                 vec![4, 4, 3, 3, 5],
