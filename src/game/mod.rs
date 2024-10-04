@@ -159,10 +159,11 @@ impl Game {
             match user_input.stack_move {
                 Some((from, to)) => self.move_legally(from, to),
                 _ => match user_input.menu_option {
+                    gui::MenuOption::Help => self.show_help(),
+                    gui::MenuOption::Quit => std::process::exit(0),
                     gui::MenuOption::Reset => *self = stage_backup.clone(),
                     gui::MenuOption::Undo => self.undo_move(),
-                    gui::MenuOption::Quit => std::process::exit(0),
-                    _ => {} // TODO: implement Help and Quit cases.
+                    _ => {}
                 },
             }
         }

@@ -68,10 +68,21 @@ impl Game {
         io::stdin().read_line(&mut String::new()).unwrap();
     }
 
+    pub fn show_help(&self) {
+        self.render();
+        println!("Help:\n");
+        println!("Enter two numbers separated by a space to move units between stacks (e.g., '2 3')");
+        println!("Type 'u' to undo the last move");
+        println!("Type 'r' to reset the stage");
+        println!("Type 'q' to quit the game");
+        println!("Press Enter to continue");
+        io::stdin().read_line(&mut String::new()).unwrap();
+    }
+
     pub fn read_valid_input(&self) -> UserInput {
         let mut user_input: UserInput = UserInput::new_menu_option(MenuOption::Help);
         let mut input: String = String::new();
-        let default_directive: String = "Select stacks to move from and to (e.g., '2 3')\nType 'u' to undo or 'r' to reset the stage".to_string();
+        let default_directive: String = "Input move or type 'h' for help".to_string();
         let invalid_input_prompt: String = format!(
             "Invalid input!\nPlease enter two different numbers between 1 and {} separated by a space", self.stacks.len()
         );
