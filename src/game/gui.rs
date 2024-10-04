@@ -95,11 +95,12 @@ impl Game {
                 break;
             }
 
-            if next_directive.len() > 0 {
-                current_directive = next_directive.clone();
-                next_directive.clear();
-            } else {
-                current_directive = default_directive.clone();
+            match next_directive.len() {
+                0 => current_directive = default_directive.clone(),
+                _ => {
+                    current_directive = next_directive.clone();
+                    next_directive.clear();
+                },
             }
 
             print!("{}: ", current_directive);
