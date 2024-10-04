@@ -71,7 +71,9 @@ impl Game {
     pub fn show_help(&self) {
         self.render();
         println!("Help:\n");
-        println!("Enter two numbers separated by a space to move units between stacks (e.g., '2 3')");
+        println!(
+            "Enter two numbers separated by a space to move units between stacks (e.g., '2 3')"
+        );
         println!("Type 'u' to undo the last move");
         println!("Type 'r' to reset the stage");
         println!("Type 'q' to quit the game");
@@ -93,22 +95,33 @@ impl Game {
             if self.stage_complete() {
                 break;
             }
-            self.render();
+
+            let no_legal_moves: bool = self.no_legal_moves();
+            if no_legal_moves {
+                next_prompt =
+                    "No legal moves left! - press 'u' to undo or 'r' to restart.".to_string();
+            }
 
             match next_prompt.len() {
                 0 => current_prompt = default_prompt.clone(),
                 _ => {
                     current_prompt = next_prompt.clone();
                     next_prompt.clear();
-                },
+                }
             }
 
+            self.render();
             print!("{}: ", current_prompt);
 
-            io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
-            input.clear();
-            io::stdin().read_line(&mut input).unwrap();
-            let str_input: &str = input.trim();
+            let str_input: &str = match no_legal_moves {
+                // TODO: show help when no legal moves, handle flushing outside.
+                _ => {
+                    io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
+                    input.clear();
+                    io::stdin().read_line(&mut input).unwrap();
+                    input.trim()
+                }
+            };
 
             user_input = match str_input {
                 "h" => UserInput::new_menu_option(MenuOption::Help),

@@ -60,8 +60,12 @@ impl Game {
         kind_indices
     }
 
-    fn _move_is_illegal(&self, from: usize, to: usize) -> bool {
-        self.move_requires_more_room(from, to) || self.stack_tops_mismatch(from, to)
+    fn move_is_illegal(&self, from: usize, to: usize) -> bool {
+        (from == to) || self.move_requires_more_room(from, to) || self.stack_tops_mismatch(from, to)
+    }
+
+    fn move_is_legal(&self, from: usize, to: usize) -> bool {
+        !self.move_is_illegal(from, to)
     }
 
     fn move_requires_more_room(&self, from: usize, to: usize) -> bool {
@@ -75,6 +79,17 @@ impl Game {
         let tops_match: bool =
             (immigrant_id == resident_id) || immigrant_id.is_empty() || resident_id.is_empty();
         !tops_match
+    }
+
+    fn no_legal_moves(&self) -> bool {
+        for (from, _) in self.stacks.iter().enumerate() {
+            for (to, _) in self.stacks.iter().enumerate() {
+                if self.move_is_legal(from, to) {
+                    return false;
+                }
+            }
+        }
+        true
     }
 
     fn update_kind_status(&mut self, stack_ind: usize) {
