@@ -90,10 +90,10 @@ impl Game {
         let mut next_prompt: String = String::new();
 
         loop {
-            self.render();
             if self.stage_complete() {
                 break;
             }
+            self.render();
 
             match next_prompt.len() {
                 0 => current_prompt = default_prompt.clone(),
