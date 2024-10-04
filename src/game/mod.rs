@@ -161,6 +161,7 @@ impl Game {
                 _ => match user_input.menu_option {
                     gui::MenuOption::Reset => *self = stage_backup.clone(),
                     gui::MenuOption::Undo => self.undo_move(),
+                    gui::MenuOption::Quit => std::process::exit(0),
                     _ => {} // TODO: implement Help and Quit cases.
                 },
             }
