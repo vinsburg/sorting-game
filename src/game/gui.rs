@@ -111,9 +111,9 @@ impl Game {
 
             user_input = match str_input {
                 "h" => UserInput::new_menu_option(MenuOption::Help),
+                "q" => UserInput::new_menu_option(MenuOption::Quit),
                 "r" => UserInput::new_menu_option(MenuOption::Reset),
                 "u" => UserInput::new_menu_option(MenuOption::Undo),
-                "q" => UserInput::new_menu_option(MenuOption::Quit),
                 _ => {
                     let parts: Vec<&str> = input.trim().split_whitespace().collect();
                     if parts.len() != 2 {
