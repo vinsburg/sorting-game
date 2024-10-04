@@ -89,10 +89,13 @@ impl Game {
 
         let kind_status_operand: usize = 1 << self.kind_indices[&immigrants.get_id()]; // TODO: access kind_indices with getter
         self.kinds_status |= kind_status_operand; // Initially set the kth bit to 1.
-        if immigrants.get_quantity() != self.units_per_kind[&immigrants.get_id()] {
-            // TODO: access kind_indices with getter
+        if immigrants.get_quantity() != self.get_total_quantity(immigrants) {
             self.kinds_status -= kind_status_operand; // zero the kth bit.
         }
+    }
+
+    fn get_total_quantity(&self, kind: Kind) -> usize {
+        self.units_per_kind[&kind.get_id()]
     }
 
     fn ledge(&mut self, from: usize, to: usize, kind: Kind, quantity: usize) {
