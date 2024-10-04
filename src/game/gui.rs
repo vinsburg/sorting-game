@@ -36,7 +36,7 @@ impl Game {
         for (stack_ind, stack) in self.stacks.iter().enumerate() {
             let mut buffer: String = "".to_string();
             for unit_id in stack.iter_unit_ids() {
-                let unit_index: usize = self.get_kind_index(unit_id); // TODO: access kind_indices with getter
+                let unit_index: usize = self.get_kind_index(unit_id);
                 let color: [u8; 3] = COLORS[unit_index % COLORS.len()].clone();
                 buffer.push_str(
                     format!(
