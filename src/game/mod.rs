@@ -193,3 +193,19 @@ impl Game {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use log::debug;
+    use super::*;
+
+    #[test]
+    fn test_get_stages() {
+        let stages: Vec<Game> = Game::get_stages();
+        let last_stage_index: usize = stages.len() - 1;
+
+        assert!(last_stage_index > 0);
+        let mut last_stage = stages[last_stage_index].clone();
+        last_stage.move_legally(0, 1);
+    }
+}

@@ -6,6 +6,7 @@ use std::vec::IntoIter;
 
 use kind::{Kind, KindId};
 
+
 pub struct Stack {
     capacity: usize,
     occupancy: usize,
