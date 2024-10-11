@@ -196,7 +196,6 @@ impl Game {
 
 #[cfg(test)]
 mod tests {
-    use log::debug;
     use super::*;
 
     #[test]
