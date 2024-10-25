@@ -7,8 +7,19 @@ use entry::Entry;
 use stack::kind::{HasId, IsEmpty, Kind, KindId};
 use stack::Stack;
 use std::collections::HashMap;
+use std::io;
 
-pub struct Game {
+trait LineReader: Default + Clone {
+    fn read_line(input: &mut String){
+        io::stdin().read_line(input).unwrap();
+    }
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct STDInReader {}
+impl LineReader for STDInReader {}
+
+pub struct Game<TR: LineReader> {
     stacks: Vec<Stack>,
     units_per_kind: HashMap<KindId, usize>,
     kind_indices: HashMap<KindId, usize>,
@@ -16,12 +27,13 @@ pub struct Game {
     turn: usize,
     stage_name: String,
     ledger: Vec<Entry>,
+    line_reader: TR
 }
 
-impl Game {
-    fn new(stacks: Vec<Stack>, stage_name: Option<String>) -> Game {
-        let units_per_kind: HashMap<KindId, usize> = Game::count_kinds(&stacks);
-        let kind_indices: HashMap<KindId, usize> = Game::index_kinds(&units_per_kind);
+impl <TLR: LineReader + Default + Clone> Game<TLR> {
+    fn new(stacks: Vec<Stack>, stage_name: Option<String>, line_reader: TLR) -> Game<TLR> {
+        let units_per_kind: HashMap<KindId, usize> = Game::<TLR>::count_kinds(&stacks);
+        let kind_indices: HashMap<KindId, usize> = Game::<TLR>::index_kinds(&units_per_kind);
         Game {
             stacks,
             units_per_kind,
@@ -30,13 +42,14 @@ impl Game {
             turn: 1,
             stage_name: stage_name.unwrap_or("".to_string()),
             ledger: Vec::new(),
+            line_reader,
         }
     }
 
-    fn clone(&self) -> Game {
+    fn clone(&self) -> Game<TLR> {
         Game::new(
             self.stacks.iter().map(|stack| stack.clone()).collect(),
-            Some(self.stage_name.clone()),
+            Some(self.stage_name.clone()), self.line_reader.clone()
         )
     }
 
@@ -165,7 +178,7 @@ impl Game {
     }
 
     fn turn_loop(&mut self) {
-        let stage_backup: Game = self.clone();
+        let stage_backup: Game<TLR> = self.clone();
         loop {
             if self.stage_complete() {
                 break;
@@ -185,7 +198,7 @@ impl Game {
     }
 
     pub fn play() {
-        let stages: Vec<Game> = Game::get_stages();
+        let stages: Vec<Game<TLR>> = Game::get_stages();
         let last_stage_index: usize = stages.len() - 1;
         for (ind, mut stage) in stages.into_iter().enumerate() {
             stage.turn_loop();
@@ -200,7 +213,7 @@ mod tests {
 
     #[test]
     fn test_get_stages() {
-        let stages: Vec<Game> = Game::get_stages();
+        let stages: Vec<Game<STDInReader>> = Game::get_stages();
         let last_stage_index: usize = stages.len() - 1;
 
         assert!(last_stage_index > 0);

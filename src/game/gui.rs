@@ -1,4 +1,4 @@
-use crate::game::Game;
+use crate::game::{Game, LineReader};
 use std::io::{self, Write};
 
 pub enum MenuOption {
@@ -23,7 +23,7 @@ impl UserInput {
     }
 }
 
-impl Game {
+impl <TLR: LineReader + Default> Game <TLR> {
     pub fn render(&self) {
         // Clear the screen and move the cursor to the top-left corner
         print!("\x1B[2J\x1B[H");
@@ -65,7 +65,7 @@ impl Game {
             "All Stacks Sorted! - {}\nPress Enter to continue",
             game_complete_message
         );
-        io::stdin().read_line(&mut String::new()).unwrap();
+        TLR::read_line(&mut String::new());
     }
 
     pub fn show_help(&self) {
@@ -78,7 +78,7 @@ impl Game {
         println!("Type 'r' to reset the stage");
         println!("Type 'q' to quit the game");
         println!("Press Enter to continue");
-        io::stdin().read_line(&mut String::new()).unwrap();
+        TLR::read_line(&mut String::new());
     }
 
     pub fn read_valid_input(&self) -> UserInput {
@@ -118,7 +118,7 @@ impl Game {
                 _ => {
                     io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
                     input.clear();
-                    io::stdin().read_line(&mut input).unwrap();
+                    TLR::read_line(&mut input);
                     input.trim()
                 }
             };
@@ -153,12 +153,12 @@ impl Game {
 
                     if self.move_requires_more_room(from, to) {
                         next_prompt =
-                            Game::illegal_move_prompt("Not enough room in the target stack");
+                            Game::<TLR>::illegal_move_prompt("Not enough room in the target stack");
                         continue;
                     }
 
                     if self.stack_tops_mismatch(from, to) {
-                        next_prompt = Game::illegal_move_prompt(
+                        next_prompt = Game::<TLR>::illegal_move_prompt(
                             "Units can only be moved towards identical units, or empty stacks",
                         );
                         continue;
