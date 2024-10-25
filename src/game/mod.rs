@@ -9,7 +9,7 @@ use stack::Stack;
 use std::collections::HashMap;
 use std::io;
 
-trait LineReader: Default + Clone {
+pub trait LineReader: Default + Clone {
     fn read_line(&self, input: &mut String);
 }
 
