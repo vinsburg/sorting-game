@@ -14,14 +14,11 @@ trait LineReader: Default + Clone {
 }
 
 #[derive(Debug, Default, Clone)]
-pub struct STDInReader {
-
-}
+pub struct STDInReader {}
 impl LineReader for STDInReader {
     fn read_line(&self, input: &mut String) {
         io::stdin().read_line(input).unwrap();
     }
-
 }
 
 pub struct Game<TR: LineReader> {
