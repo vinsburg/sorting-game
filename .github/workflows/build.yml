@@ -33,11 +33,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        target: [x86_64-unknown-linux-gnu, x86_64-pc-windows-msvc, x86_64-apple-darwin, aarch64-apple-darwin, aarch64-linux-android]
+        target: [x86_64-unknown-linux-gnu, i686-unknown-linux-gnu, x86_64-pc-windows-msvc, x86_64-apple-darwin, aarch64-apple-darwin, aarch64-linux-android]
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
             artifact: sorting-game-linux-x86-64.tar.gz
+          - target: i686-unknown-linux-gnu
+            os: ubuntu-latest
+            artifact: sorting-game-linux-x86-32.tar.gz
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
             artifact: sorting-game-linux-arm64.tar.gz
@@ -57,11 +60,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install cross-compilation tools
+    - name: Install linux aarch64 cross-compilation tools
       if: matrix.target == 'aarch64-unknown-linux-gnu'
       run: |
         sudo apt-get update
         sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+    - name: Install linux i686 cross-compilation tools
+      if: matrix.target == 'i686-unknown-linux-gnu'
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get install -y gcc-multilib g++-multilib libc6-dev-i386
         
     - name: Set up Rust
       uses: actions-rs/toolchain@v1
@@ -76,6 +86,11 @@ jobs:
       with:
         ndk-version: r25b
 
+    - name: Build binaries
+      if: matrix.target != 'aarch64-linux-android' && matrix.target != 'aarch64-unknown-linux-gnu' && matrix.target != 'i686-unknown-linux-gnu'
+      run: |
+        cargo build --release --target ${{ matrix.target }}
+
     - name: Build Android NDK
       if: matrix.target == 'aarch64-linux-android'
       run: |
@@ -89,12 +104,14 @@ jobs:
         export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
         export CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc
         export CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++
-
         cargo build --release --target ${{ matrix.target }}
 
-    - name: Build binaries
-      if: matrix.target != 'aarch64-linux-android' && matrix.target != 'aarch64-unknown-linux-gnu'
+    - name: Build i686-linux binaries
+      if: matrix.target == 'i686-unknown-linux-gnu'
       run: |
+        export CARGO_TARGET_I686_UNKNOWN_LINUX_GNU_LINKER=gcc
+        export CC_i686_unknown_linux_gnu=gcc
+        export CXX_i686_unknown_linux_gnu=g++
         cargo build --release --target ${{ matrix.target }}
 
     - name: Create archive
@@ -161,6 +178,7 @@ jobs:
         tag_name: ${{ steps.check-tag.outputs.tag }}
         name: Release ${{ steps.check-tag.outputs.tag }}
         files: |
+          sorting-game-linux-x86-32.tar.gz
           sorting-game-linux-x86-64.tar.gz
           sorting-game-linux-arm64.tar.gz
           sorting-game-windows-x86-64.zip
