@@ -65,7 +65,7 @@ impl<TLR: LineReader + Default> Game<TLR> {
             "All Stacks Sorted! - {}\nPress Enter to continue",
             game_complete_message
         );
-        TLR::read_line(&mut String::new());
+        self.line_reader.read_line(&mut String::new());
     }
 
     pub fn show_help(&self) {
@@ -78,7 +78,7 @@ impl<TLR: LineReader + Default> Game<TLR> {
         println!("Type 'r' to reset the stage");
         println!("Type 'q' to quit the game");
         println!("Press Enter to continue");
-        TLR::read_line(&mut String::new());
+        self.line_reader.read_line(&mut String::new());
     }
 
     pub fn read_valid_input(&self) -> UserInput {
@@ -118,7 +118,7 @@ impl<TLR: LineReader + Default> Game<TLR> {
                 _ => {
                     io::stdout().flush().unwrap(); // Flush to ensure the message is displayed before reading input
                     input.clear();
-                    TLR::read_line(&mut input);
+                    self.line_reader.read_line(&mut input);
                     input.trim()
                 }
             };
