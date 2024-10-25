@@ -10,14 +10,18 @@ use std::collections::HashMap;
 use std::io;
 
 trait LineReader: Default + Clone {
+    fn read_line(input: &mut String);
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct STDInReader {
+
+}
+impl LineReader for STDInReader {
     fn read_line(input: &mut String) {
         io::stdin().read_line(input).unwrap();
     }
 }
-
-#[derive(Debug, Default, Clone)]
-pub struct STDInReader {}
-impl LineReader for STDInReader {}
 
 pub struct Game<TR: LineReader> {
     stacks: Vec<Stack>,
