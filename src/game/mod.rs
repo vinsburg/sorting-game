@@ -10,7 +10,7 @@ use std::collections::HashMap;
 use std::io;
 
 trait LineReader: Default + Clone {
-    fn read_line(input: &mut String){
+    fn read_line(input: &mut String) {
         io::stdin().read_line(input).unwrap();
     }
 }
@@ -27,10 +27,10 @@ pub struct Game<TR: LineReader> {
     turn: usize,
     stage_name: String,
     ledger: Vec<Entry>,
-    line_reader: TR
+    line_reader: TR,
 }
 
-impl <TLR: LineReader + Default + Clone> Game<TLR> {
+impl<TLR: LineReader + Default + Clone> Game<TLR> {
     fn new(stacks: Vec<Stack>, stage_name: Option<String>, line_reader: TLR) -> Game<TLR> {
         let units_per_kind: HashMap<KindId, usize> = Game::<TLR>::count_kinds(&stacks);
         let kind_indices: HashMap<KindId, usize> = Game::<TLR>::index_kinds(&units_per_kind);
@@ -49,7 +49,8 @@ impl <TLR: LineReader + Default + Clone> Game<TLR> {
     fn clone(&self) -> Game<TLR> {
         Game::new(
             self.stacks.iter().map(|stack| stack.clone()).collect(),
-            Some(self.stage_name.clone()), self.line_reader.clone()
+            Some(self.stage_name.clone()),
+            self.line_reader.clone(),
         )
     }
 

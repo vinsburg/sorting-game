@@ -23,7 +23,7 @@ impl UserInput {
     }
 }
 
-impl <TLR: LineReader + Default> Game <TLR> {
+impl<TLR: LineReader + Default> Game<TLR> {
     pub fn render(&self) {
         // Clear the screen and move the cursor to the top-left corner
         print!("\x1B[2J\x1B[H");
