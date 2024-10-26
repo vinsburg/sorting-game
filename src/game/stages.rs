@@ -1,7 +1,7 @@
 use crate::game::stack::Stack;
-use crate::game::Game;
+use crate::game::{Game, LineReader};
 
-impl Game {
+impl<TLR: LineReader + Default> Game<TLR> {
     fn vecs_to_stacks(vecs: Vec<Vec<usize>>) -> Vec<Stack> {
         let mut stacks: Vec<Stack> = Vec::new();
         let mut stack: Stack;
@@ -12,11 +12,15 @@ impl Game {
         stacks
     }
 
-    fn new_from_vecs(vecs: Vec<Vec<usize>>, stage_name: Option<String>) -> Game {
-        Game::new(Game::vecs_to_stacks(vecs), stage_name)
+    fn new_from_vecs(
+        vecs: Vec<Vec<usize>>,
+        stage_name: Option<String>,
+        line_reader: TLR,
+    ) -> Game<TLR> {
+        Game::new(Game::<TLR>::vecs_to_stacks(vecs), stage_name, line_reader)
     }
 
-    pub fn get_stages() -> Vec<Game> {
+    pub fn get_stages() -> Vec<Game<TLR>> {
         let stage_vec: Vec<Vec<Vec<usize>>> = vec![
             vec![vec![2, 1, 0], vec![1, 2], vec![2, 0]],
             vec![
@@ -51,10 +55,14 @@ impl Game {
                 vec![5, 2, 5],
             ],
         ];
-        let mut stages: Vec<Game> = Vec::new();
+        let mut stages: Vec<Game<TLR>> = Vec::new();
         for (ind, vec_stacks) in stage_vec.iter().enumerate() {
             let name: String = format!("Stage - {}", ind + 1);
-            stages.push(Game::new_from_vecs(vec_stacks.clone(), Some(name)));
+            stages.push(Game::new_from_vecs(
+                vec_stacks.clone(),
+                Some(name),
+                TLR::default(),
+            ));
         }
         stages
     }
