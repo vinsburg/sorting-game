@@ -3,7 +3,7 @@ mod gui;
 mod stack;
 mod stages;
 
-use crate::line_reader::LineReader;
+use crate::line_reader::{LineReader, STDInReader};
 use entry::Entry;
 use stack::kind::{HasId, IsEmpty, Kind, KindId};
 use stack::Stack;
@@ -188,8 +188,8 @@ impl<TLR: LineReader + Default + Clone> Game<TLR> {
         }
     }
 
-    pub fn play() {
-        let stages: Vec<Game<TLR>> = Game::get_stages();
+    pub fn play(line_reader: TLR) {
+        let stages: Vec<Game<TLR>> = Game::get_stages(line_reader);
         let last_stage_index: usize = stages.len() - 1;
         for (ind, mut stage) in stages.into_iter().enumerate() {
             stage.turn_loop();
@@ -200,16 +200,29 @@ impl<TLR: LineReader + Default + Clone> Game<TLR> {
 
 #[cfg(test)]
 mod tests {
+    use std::cell::RefCell;
     use super::*;
-    use crate::line_reader::{LineReader, MockLineReader, STDInReader};
+    use crate::line_reader::{MockLineReader};
 
     #[test]
     fn test_get_stages() {
-        let stages: Vec<Game<STDInReader>> = Game::get_stages();
+        let stages: Vec<Game<MockLineReader>> = Game::get_stages(MockLineReader::default());
         let last_stage_index: usize = stages.len() - 1;
 
         assert!(last_stage_index > 0);
         let mut last_stage = stages[last_stage_index].clone();
         last_stage.move_legally(0, 1);
+    }
+
+    #[test]
+    fn test_first_stage() {
+        let mock_reader = MockLineReader {
+            index: RefCell::new(0),
+            lines: vec!["2 3".to_string(), "1 2".to_string(), "3 1".to_string()],
+        };
+        let mut first_stage :Game<MockLineReader> = Game::get_stages(mock_reader)[0].clone();
+        /** not the best way to test since we can get stuck in a loop, but its a start **/
+        first_stage.turn_loop();
+
     }
 }

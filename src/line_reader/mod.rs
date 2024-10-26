@@ -10,15 +10,15 @@ impl LineReader for STDInReader {
 
 #[derive(Clone)]
 pub struct MockLineReader {
-    index: RefCell<usize>,
-    lines: Vec<String>,
+    pub(crate) index: RefCell<usize>,
+    pub(crate) lines: Vec<String>,
 }
 
 impl Default for MockLineReader {
     fn default() -> Self {
         MockLineReader {
             index: RefCell::new(0),
-            lines: vec!["1 2".to_string(), "3 4".to_string()],
+            lines: vec!["2 3".to_string(), "1 2".to_string()],
         }
     }
 }
@@ -49,8 +49,8 @@ mod tests {
         let mock = MockLineReader::default();
         let mut input = String::new();
         mock.read_line(&mut input);
-        assert!(input.eq("1 2"));
+        assert!(input.eq("2 3"));
         mock.read_line(&mut input);
-        assert!(input.eq("3 4"));
+        assert!(input.eq("1 2"));
     }
 }
