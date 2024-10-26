@@ -8,10 +8,11 @@ use stack::kind::{HasId, IsEmpty, Kind, KindId};
 use stack::Stack;
 use std::collections::HashMap;
 use std::io;
-
 pub trait LineReader: Default + Clone {
     fn read_line(&self, input: &mut String);
 }
+
+
 
 #[derive(Debug, Default, Clone)]
 pub struct STDInReader {}
@@ -212,6 +213,7 @@ impl<TLR: LineReader + Default + Clone> Game<TLR> {
 
 #[cfg(test)]
 mod tests {
+    use std::cell::RefCell;
     use super::*;
 
     #[test]
@@ -222,5 +224,39 @@ mod tests {
         assert!(last_stage_index > 0);
         let mut last_stage = stages[last_stage_index].clone();
         last_stage.move_legally(0, 1);
+    }
+
+
+    #[test]
+    fn test_mock_line_reader() {
+        #[derive(Clone)]
+        struct MockLineReader {
+            index: RefCell<usize>,
+            lines: Vec<String>
+        }
+
+
+        impl Default for MockLineReader {
+            fn default() -> Self {
+                MockLineReader { index: RefCell::new(0) , lines: vec!["1 2".to_string(), "3 4".to_string()]}
+            }
+        }
+        impl LineReader for MockLineReader {
+            fn read_line(&self, input: &mut String) {
+                let mut index = self.index.borrow_mut();
+                let line = self.lines.get(*index);
+                *index = *index + 1;
+                *input = line.unwrap().clone();
+            }
+        }
+
+        let mock = MockLineReader::default();
+        let mut input = String::new();
+        mock.read_line(&mut input);
+        assert!(input.eq("1 2"));
+        mock.read_line(&mut input);
+        assert!(input.eq("3 4"));
+
+
     }
 }
