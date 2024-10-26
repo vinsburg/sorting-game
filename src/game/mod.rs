@@ -3,11 +3,11 @@ mod gui;
 mod stack;
 mod stages;
 
+use crate::line_reader::LineReader;
 use entry::Entry;
 use stack::kind::{HasId, IsEmpty, Kind, KindId};
 use stack::Stack;
 use std::collections::HashMap;
-use crate::line_reader::LineReader;
 
 pub struct Game<TR: LineReader> {
     stacks: Vec<Stack>,
@@ -212,6 +212,4 @@ mod tests {
         let mut last_stage = stages[last_stage_index].clone();
         last_stage.move_legally(0, 1);
     }
-
-
 }
