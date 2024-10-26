@@ -42,7 +42,7 @@ pub struct STDInReader {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::line_reader::{LineReader, MockLineReader, STDInReader};
+    use crate::line_reader::{LineReader, MockLineReader};
 
     #[test]
     fn test_mock_line_reader() {
