@@ -1,5 +1,6 @@
 use crate::game::stack::Stack;
-use crate::game::{Game, LineReader};
+use crate::game::Game;
+use crate::line_reader::LineReader;
 
 impl<TLR: LineReader + Default> Game<TLR> {
     fn vecs_to_stacks(vecs: Vec<Vec<usize>>) -> Vec<Stack> {
