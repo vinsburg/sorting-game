@@ -1,4 +1,5 @@
-use crate::game::{Game, LineReader};
+use crate::game::Game;
+use crate::line_reader::LineReader;
 use std::io::{self, Write};
 
 pub enum MenuOption {

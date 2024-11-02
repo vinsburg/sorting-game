@@ -1,5 +1,6 @@
 use crate::game::stack::Stack;
-use crate::game::{Game, LineReader};
+use crate::game::Game;
+use crate::line_reader::LineReader;
 
 impl<TLR: LineReader + Default> Game<TLR> {
     fn vecs_to_stacks(vecs: Vec<Vec<usize>>) -> Vec<Stack> {
@@ -20,7 +21,7 @@ impl<TLR: LineReader + Default> Game<TLR> {
         Game::new(Game::<TLR>::vecs_to_stacks(vecs), stage_name, line_reader)
     }
 
-    pub fn get_stages() -> Vec<Game<TLR>> {
+    pub fn get_stages(line_reader: TLR) -> Vec<Game<TLR>> {
         let stage_vec: Vec<Vec<Vec<usize>>> = vec![
             vec![vec![2, 1, 0], vec![1, 2], vec![2, 0]],
             vec![
@@ -61,7 +62,7 @@ impl<TLR: LineReader + Default> Game<TLR> {
             stages.push(Game::new_from_vecs(
                 vec_stacks.clone(),
                 Some(name),
-                TLR::default(),
+                line_reader.clone(),
             ));
         }
         stages
