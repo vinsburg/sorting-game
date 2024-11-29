@@ -202,7 +202,7 @@ impl<TLR: LineReader + Default + Clone> Game<TLR> {
 mod tests {
     use super::*;
     use crate::line_reader::MockLineReader;
-    use std::cell::RefCell;
+    use std::cell::{Cell, RefCell};
 
     #[test]
     fn test_get_stages() {
@@ -217,7 +217,7 @@ mod tests {
     #[test]
     fn test_first_stage() {
         let mock_reader = MockLineReader {
-            index: RefCell::new(0),
+            index: Cell::new(0),
             lines: vec!["2 3".to_string(), "1 2".to_string(), "3 1".to_string()],
         };
         let mut first_stage: Game<MockLineReader> = Game::get_stages(mock_reader)[0].clone();
