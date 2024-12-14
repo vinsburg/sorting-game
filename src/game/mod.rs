@@ -3,7 +3,7 @@ mod gui;
 mod stack;
 mod stages;
 
-use crate::line_reader::{LineReader, STDInReader};
+use crate::line_reader::LineReader;
 use entry::Entry;
 use stack::kind::{HasId, IsEmpty, Kind, KindId};
 use stack::Stack;
@@ -202,7 +202,7 @@ impl<TLR: LineReader + Default + Clone> Game<TLR> {
 mod tests {
     use super::*;
     use crate::line_reader::MockLineReader;
-    use std::cell::{Cell, RefCell};
+    use std::cell::Cell;
 
     #[test]
     fn test_get_stages() {
@@ -221,7 +221,7 @@ mod tests {
             lines: vec!["2 3".to_string(), "1 2".to_string(), "3 1".to_string()],
         };
         let mut first_stage: Game<MockLineReader> = Game::get_stages(mock_reader)[0].clone();
-        /** not the best way to test since we can get stuck in a loop, but its a start **/
+        // not the best way to test since we can get stuck in a loop, but its a start.
         first_stage.turn_loop();
     }
 }

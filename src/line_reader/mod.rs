@@ -1,5 +1,4 @@
-use crate::game::Game;
-use std::cell::{Cell, RefCell};
+use std::cell::Cell;
 use std::io;
 
 impl LineReader for STDInReader {
@@ -25,7 +24,7 @@ impl Default for MockLineReader {
 
 impl LineReader for MockLineReader {
     fn read_line(&self, input: &mut String) {
-        let mut index = self.index.get();
+        let index = self.index.get();
         let line = self.lines.get(index);
         self.index.set(index + 1);
         *input = line.unwrap().clone();
@@ -41,7 +40,6 @@ pub struct STDInReader {}
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::line_reader::{LineReader, MockLineReader};
 
     #[test]
